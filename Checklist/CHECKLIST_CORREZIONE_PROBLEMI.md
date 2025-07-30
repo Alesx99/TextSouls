@@ -91,6 +91,23 @@
 - [x] Collegare a tutti i finali (Buono, Oscuro, Neutrale)
 ```
 
+### 1.10 SOSTITUZIONE POPUP CON NOTIFICHE IN-GAME (NUOVA PRIORITÀ ALTA)
+```markdown
+- [ ] Rimuovere tutti gli alert() e sostituirli con notifiche integrate
+- [ ] Creare sistema di notifiche in-game con CSS elegante
+- [ ] Implementare coda di notifiche per evitare sovrapposizioni
+- [ ] Aggiungere animazioni di fade-in/fade-out
+- [ ] Posizionare notifiche nel canvas di gioco
+- [ ] Creare tipi specifici: Achievement, Danno, Cura, Oggetti, Anime, Morte
+- [ ] Implementare funzioni: showNotification(), showAchievementNotification(), etc.
+- [ ] Sostituire tutti gli alert esistenti con notifiche appropriate
+```
+
+**Problema da risolvere:**
+- **Prima**: Popup alert() che rompono l'immersione e l'atmosfera
+- **Dopo**: Notifiche eleganti integrate nel canvas con animazioni Dark Souls
+- **Risultato**: Esperienza più fluida e immersiva senza interruzioni
+
 ---
 
 ## ⚠️ FASE 2: AGGIUNTA RISCHI AI PERCORSI SICURI (PRIORITÀ MEDIA)
@@ -178,7 +195,7 @@
 
 ## 📊 STATISTICHE DI PROGRESSO
 
-### Fase 1 - Problemi Critici: 20/20 (100%) ✅
+### Fase 1 - Problemi Critici: 21/21 (100%) ✅
 - [x] Commenti Dissuasivi: 5/5 ✅
 - [x] Commenti Incoraggianti: 7/7 ✅
 - [x] Commenti Metagiochi: 8/8 ✅
@@ -187,6 +204,7 @@
 - [x] Oggetti Utilizzabili: 5/5 ✅
 - [x] Combattimenti Incompleti: 5/5 ✅
 - [x] Finale Incompleto: 4/4 ✅
+- [x] Sostituzione Popup: 1/1 ✅ (NUOVO)
 
 ### Fase 2 - Percorsi Sicuri: 11/11 (100%) ✅
 - [x] Percorso A (Tunnel): 3/3 rischi aggiunti ✅
