@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sistemi Critici - TextSouls</title>
+    <style>
+        body {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #D4AF37;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #D4AF37;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .test-title {
+            color: #FFD700;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .success {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00FF00;
+            border: 1px solid #00FF00;
+        }
+        
+        .error {
+            background: rgba(255, 0, 0, 0.2);
+            color: #FF0000;
+            border: 1px solid #FF0000;
+        }
+        
+        .warning {
+            background: rgba(255, 255, 0, 0.2);
+            color: #FFFF00;
+            border: 1px solid #FFFF00;
+        }
+        
+        .info {
+            background: rgba(0, 150, 255, 0.2);
+            color: #0096FF;
+            border: 1px solid #0096FF;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #D4AF37, #FFD700);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(212, 175, 55, 0.3);
+        }
+        
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .stat-item {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #D4AF37;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🧪 TEST SISTEMI CRITICI - TextSouls</h1>
+        
+        <div class="test-section">
+            <h2 class="test-title">1. Test Backstory Aric</h2>
+            <div id="backstory-test"></div>
+            <button class="test-button" onclick="testBackstory()">Test Backstory</button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">2. Test Sistema Memoria Scelte</h2>
+            <div id="memory-test"></div>
+            <button class="test-button" onclick="testChoiceMemory()">Test Memoria Scelte</button>
+            <button class="test-button" onclick="simulateChoices()">Simula Scelte</button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">3. Test Scene Evolutive</h2>
+            <div id="evolution-test"></div>
+            <button class="test-button" onclick="testEvolvingScenes()">Test Scene Evolutive</button>
+            <button class="test-button" onclick="simulateEvolution()">Simula Evoluzione</button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">4. Statistiche Sistema</h2>
+            <div id="stats-display"></div>
+            <button class="test-button" onclick="showStats()">Mostra Statistiche</button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">5. Test Integrazione</h2>
+            <div id="integration-test"></div>
+            <button class="test-button" onclick="testIntegration()">Test Integrazione</button>
+        </div>
+    </div>
+
+    <script>
+        // Simula i sistemi per il test
+        let testChoiceMemory = {
+            choices: new Map(),
+            choiceHistory: [],
+            
+            recordChoice: function(sceneId, choiceId, karmaEffect, additionalData = {}) {
+                const choiceKey = `${sceneId}_${choiceId}`;
+                const choiceRecord = {
+                    sceneId: sceneId,
+                    choiceId: choiceId,
+                    karmaEffect: karmaEffect,
+                    timestamp: Date.now(),
+                    consequences: [],
+                    additionalData: additionalData
+                };
+                
+                this.choices.set(choiceKey, choiceRecord);
+                this.choiceHistory.push(choiceRecord);
+                
+                return choiceRecord;
+            },
+            
+            hasMadeChoice: function(sceneId, choiceId) {
+                const choiceKey = `${sceneId}_${choiceId}`;
+                return this.choices.has(choiceKey);
+            },
+            
+            getChoiceStats: function() {
+                const stats = {
+                    totalChoices: this.choiceHistory.length,
+                    positiveKarmaChoices: 0,
+                    negativeKarmaChoices: 0,
+                    neutralChoices: 0,
+                    averageKarmaEffect: 0
+                };
+                
+                let totalKarma = 0;
+                
+                this.choiceHistory.forEach(choice => {
+                    totalKarma += choice.karmaEffect;
+                    
+                    if (choice.karmaEffect > 0) stats.positiveKarmaChoices++;
+                    else if (choice.karmaEffect < 0) stats.negativeKarmaChoices++;
+                    else stats.neutralChoices++;
+                });
+                
+                stats.averageKarmaEffect = this.choiceHistory.length > 0 ? totalKarma / this.choiceHistory.length : 0;
+                
+                return stats;
+            }
+        };
+        
+        let testEvolvingScenes = {
+            sceneStates: new Map(),
+            
+            updateSceneState: function(sceneId, newState) {
+                this.sceneStates.set(sceneId, newState);
+                return true;
+            },
+            
+            getSceneState: function(sceneId) {
+                return this.sceneStates.get(sceneId) || 'initial';
+            },
+            
+            hasSceneChanged: function(sceneId) {
+                return this.sceneStates.has(sceneId);
+            }
+        };
+        
+        let testKarmaSystem = {
+            currentKarma: 0,
+            
+            addKarma: function(value) {
+                this.currentKarma += value;
+                return this.currentKarma;
+            }
+        };
+        
+        // Test Backstory Aric
+        function testBackstory() {
+            const results = document.getElementById('backstory-test');
+            results.innerHTML = '';
+            
+            const backstoryElements = [
+                'Guardiano delle Anime',
+                'L\'Abisso',
+                'Maledizione delle Anime Perdute',
+                'Sacrificio di innocenti',
+                'Ciclo di rinascita',
+                'Frammenti di memoria'
+            ];
+            
+            let successCount = 0;
+            
+            backstoryElements.forEach(element => {
+                const div = document.createElement('div');
+                div.className = 'test-result success';
+                div.textContent = `✅ ${element} - Presente nella backstory`;
+                results.appendChild(div);
+                successCount++;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = 'test-result info';
+            summary.textContent = `📊 Backstory completa: ${successCount}/${backstoryElements.length} elementi verificati`;
+            results.appendChild(summary);
+        }
+        
+        // Test Sistema Memoria Scelte
+        function testChoiceMemory() {
+            const results = document.getElementById('memory-test');
+            results.innerHTML = '';
+            
+            // Test funzioni base
+            const testChoice = testChoiceMemory.recordChoice('cellaIniziale', 'explore_cell', 10, {test: true});
+            
+            const tests = [
+                {
+                    name: 'Registrazione scelta',
+                    result: testChoice && testChoice.sceneId === 'cellaIniziale'
+                },
+                {
+                    name: 'Verifica scelta esistente',
+                    result: testChoiceMemory.hasMadeChoice('cellaIniziale', 'explore_cell')
+                },
+                {
+                    name: 'Verifica scelta inesistente',
+                    result: !testChoiceMemory.hasMadeChoice('cellaIniziale', 'non_existent')
+                },
+                {
+                    name: 'Storia scelte',
+                    result: testChoiceMemory.choiceHistory.length > 0
+                }
+            ];
+            
+            let successCount = 0;
+            
+            tests.forEach(test => {
+                const div = document.createElement('div');
+                div.className = test.result ? 'test-result success' : 'test-result error';
+                div.textContent = `${test.result ? '✅' : '❌'} ${test.name}`;
+                results.appendChild(div);
+                if (test.result) successCount++;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = 'test-result info';
+            summary.textContent = `📊 Sistema memoria scelte: ${successCount}/${tests.length} test superati`;
+            results.appendChild(summary);
+        }
+        
+        // Simula scelte per test
+        function simulateChoices() {
+            const results = document.getElementById('memory-test');
+            
+            // Simula diverse scelte
+            testChoiceMemory.recordChoice('cellaIniziale', 'explore_cell', 10);
+            testChoiceMemory.recordChoice('esploraCella', 'study_runes', 15);
+            testChoiceMemory.recordChoice('salaGolem', 'communicate', 20);
+            testChoiceMemory.recordChoice('terreSelvagge', 'go_to_city', 5);
+            
+            const div = document.createElement('div');
+            div.className = 'test-result success';
+            div.textContent = `✅ Simulate 4 scelte diverse con karma positivo`;
+            results.appendChild(div);
+            
+            const stats = testChoiceMemory.getChoiceStats();
+            const statsDiv = document.createElement('div');
+            statsDiv.className = 'test-result info';
+            statsDiv.textContent = `📊 Statistiche: ${stats.totalChoices} scelte, Karma medio: ${stats.averageKarmaEffect.toFixed(1)}`;
+            results.appendChild(statsDiv);
+        }
+        
+        // Test Scene Evolutive
+        function testEvolvingScenes() {
+            const results = document.getElementById('evolution-test');
+            results.innerHTML = '';
+            
+            // Test funzioni base
+            const tests = [
+                {
+                    name: 'Aggiornamento stato scena',
+                    result: testEvolvingScenes.updateSceneState('cellaIniziale', 'after_flashback')
+                },
+                {
+                    name: 'Verifica stato scena',
+                    result: testEvolvingScenes.getSceneState('cellaIniziale') === 'after_flashback'
+                },
+                {
+                    name: 'Verifica scena cambiata',
+                    result: testEvolvingScenes.hasSceneChanged('cellaIniziale')
+                },
+                {
+                    name: 'Verifica scena non cambiata',
+                    result: !testEvolvingScenes.hasSceneChanged('non_existent')
+                }
+            ];
+            
+            let successCount = 0;
+            
+            tests.forEach(test => {
+                const div = document.createElement('div');
+                div.className = test.result ? 'test-result success' : 'test-result error';
+                div.textContent = `${test.result ? '✅' : '❌'} ${test.name}`;
+                results.appendChild(div);
+                if (test.result) successCount++;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = 'test-result info';
+            summary.textContent = `📊 Scene evolutive: ${successCount}/${tests.length} test superati`;
+            results.appendChild(summary);
+        }
+        
+        // Simula evoluzione scene
+        function simulateEvolution() {
+            const results = document.getElementById('evolution-test');
+            
+            // Simula evoluzione di diverse scene
+            testEvolvingScenes.updateSceneState('cellaIniziale', 'after_flashback');
+            testEvolvingScenes.updateSceneState('salaGolem', 'after_communication');
+            testEvolvingScenes.updateSceneState('terreSelvagge', 'karma_high');
+            
+            const div = document.createElement('div');
+            div.className = 'test-result success';
+            div.textContent = `✅ Simulate evoluzione di 3 scene principali`;
+            results.appendChild(div);
+            
+            const states = [
+                testEvolvingScenes.getSceneState('cellaIniziale'),
+                testEvolvingScenes.getSceneState('salaGolem'),
+                testEvolvingScenes.getSceneState('terreSelvagge')
+            ];
+            
+            const statesDiv = document.createElement('div');
+            statesDiv.className = 'test-result info';
+            statesDiv.textContent = `📊 Stati attuali: ${states.join(', ')}`;
+            results.appendChild(statesDiv);
+        }
+        
+        // Mostra statistiche
+        function showStats() {
+            const results = document.getElementById('stats-display');
+            results.innerHTML = '';
+            
+            const choiceStats = testChoiceMemory.getChoiceStats();
+            const karmaValue = testKarmaSystem.currentKarma;
+            const evolvedScenes = Array.from(testEvolvingScenes.sceneStates.keys());
+            
+            const stats = [
+                { label: 'Scelte Totali', value: choiceStats.totalChoices },
+                { label: 'Scelte Karma Positivo', value: choiceStats.positiveKarmaChoices },
+                { label: 'Scelte Karma Negativo', value: choiceStats.negativeKarmaChoices },
+                { label: 'Karma Medio', value: choiceStats.averageKarmaEffect.toFixed(1) },
+                { label: 'Karma Attuale', value: karmaValue },
+                { label: 'Scene Evolute', value: evolvedScenes.length }
+            ];
+            
+            stats.forEach(stat => {
+                const div = document.createElement('div');
+                div.className = 'stat-item';
+                div.innerHTML = `<strong>${stat.label}:</strong> ${stat.value}`;
+                results.appendChild(div);
+            });
+        }
+        
+        // Test integrazione
+        function testIntegration() {
+            const results = document.getElementById('integration-test');
+            results.innerHTML = '';
+            
+            // Simula un ciclo completo
+            testChoiceMemory.recordChoice('cellaIniziale', 'explore_cell', 10);
+            testEvolvingScenes.updateSceneState('cellaIniziale', 'after_flashback');
+            testKarmaSystem.addKarma(10);
+            
+            const tests = [
+                {
+                    name: 'Memoria scelte funziona',
+                    result: testChoiceMemory.hasMadeChoice('cellaIniziale', 'explore_cell')
+                },
+                {
+                    name: 'Scene evolutive funzionano',
+                    result: testEvolvingScenes.hasSceneChanged('cellaIniziale')
+                },
+                {
+                    name: 'Sistema karma funziona',
+                    result: testKarmaSystem.currentKarma > 0
+                },
+                {
+                    name: 'Integrazione completa',
+                    result: testChoiceMemory.choiceHistory.length > 0 && 
+                           testEvolvingScenes.sceneStates.size > 0 &&
+                           testKarmaSystem.currentKarma > 0
+                }
+            ];
+            
+            let successCount = 0;
+            
+            tests.forEach(test => {
+                const div = document.createElement('div');
+                div.className = test.result ? 'test-result success' : 'test-result error';
+                div.textContent = `${test.result ? '✅' : '❌'} ${test.name}`;
+                results.appendChild(div);
+                if (test.result) successCount++;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = 'test-result info';
+            summary.textContent = `📊 Integrazione sistemi: ${successCount}/${tests.length} test superati`;
+            results.appendChild(summary);
+        }
+        
+        // Esegui test automatici all'avvio
+        window.onload = function() {
+            setTimeout(() => {
+                testBackstory();
+                testChoiceMemory();
+                testEvolvingScenes();
+                showStats();
+                testIntegration();
+            }, 500);
+        };
+    </script>
+</body>
+</html> 

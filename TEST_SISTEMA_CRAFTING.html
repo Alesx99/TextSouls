@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sistema Crafting - TextSouls</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #D4AF37;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #D4AF37;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .test-title {
+            color: #FFD700;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #D4AF37, #FFD700);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(212, 175, 55, 0.3);
+        }
+        
+        .status-display {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #D4AF37;
+            margin: 10px 0;
+        }
+        
+        .error {
+            color: #FF0000;
+            background: rgba(255, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        
+        .success {
+            color: #00FF00;
+            background: rgba(0, 255, 0, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        
+        .info {
+            color: #0096FF;
+            background: rgba(0, 150, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">🧪 TEST SISTEMA CRAFTING - TextSouls</h1>
+        
+        <div class="test-section">
+            <h2 class="test-title">1. Test Funzioni Base</h2>
+            <div id="basic-test"></div>
+            <button class="test-button" onclick="testBasicFunctions()">Test Funzioni Base</button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">2. Test Ricette</h2>
+            <div id="recipe-test"></div>
+            <button class="test-button" onclick="testRecipes()">Test Ricette</button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">3. Test Crafting</h2>
+            <div id="crafting-test"></div>
+            <button class="test-button" onclick="testCrafting()">Test Crafting</button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">4. Simulazione Completa</h2>
+            <div id="simulation-test"></div>
+            <button class="test-button" onclick="simulateCrafting()">Simula Crafting</button>
+        </div>
+        
+        <div class="test-section">
+            <h2 class="test-title">5. Stato Sistema</h2>
+            <div id="status-display"></div>
+            <button class="test-button" onclick="showStatus()">Mostra Stato</button>
+        </div>
+    </div>
+
+    <script>
+        // Simula il sistema crafting per i test
+        let testInventory = [];
+        let testSouls = 0;
+        
+        let testCraftingRecipes = {
+            "Pozione di Salute": {
+                ingredients: ["Erba Curativa", "Acqua Pura"],
+                soulsCost: 10,
+                description: "Ripristina 50 HP"
+            },
+            "Pozione di Forza": {
+                ingredients: ["Erba di Forza", "Cristallo di Potenza"],
+                soulsCost: 20,
+                description: "Aumenta temporaneamente la forza"
+            },
+            "Amuleto Potenziato": {
+                ingredients: ["Amuleto Antico", "Pergamena di Rune", "Gemma Preziosa"],
+                soulsCost: 50,
+                description: "Protezione arcana potenziata"
+            },
+            "Pozione della Cura": {
+                ingredients: ["Erba Rara", "Amuleto Antico", "Cristallo di Anima"],
+                soulsCost: 100,
+                description: "Cura la maledizione (finale)"
+            }
+        };
+        
+        function testCanCraft(recipeName) {
+            const recipe = testCraftingRecipes[recipeName];
+            if (!recipe) return false;
+            
+            // Controlla se hai tutti gli ingredienti
+            for (let ingredient of recipe.ingredients) {
+                if (!testInventory.includes(ingredient)) {
+                    return false;
+                }
+            }
+            
+            // Controlla se hai abbastanza anime
+            if (testSouls < recipe.soulsCost) {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function testCraftItem(recipeName) {
+            const recipe = testCraftingRecipes[recipeName];
+            if (!recipe) {
+                return { success: false, message: "Ricetta non trovata!" };
+            }
+            
+            if (!testCanCraft(recipeName)) {
+                return { success: false, message: "Non hai gli ingredienti necessari o abbastanza anime!" };
+            }
+            
+            // Rimuovi gli ingredienti
+            for (let ingredient of recipe.ingredients) {
+                const index = testInventory.indexOf(ingredient);
+                if (index > -1) {
+                    testInventory.splice(index, 1);
+                }
+            }
+            
+            // Rimuovi le anime
+            testSouls -= recipe.soulsCost;
+            
+            // Aggiungi l'oggetto craftato
+            testInventory.push(recipeName);
+            
+            return { success: true, message: `Hai creato ${recipeName}!` };
+        }
+        
+        // Test funzioni base
+        function testBasicFunctions() {
+            const results = document.getElementById('basic-test');
+            results.innerHTML = '';
+            
+            const tests = [
+                {
+                    name: 'Test craftingRecipes definito',
+                    result: typeof testCraftingRecipes !== 'undefined'
+                },
+                {
+                    name: 'Test inventory inizializzato',
+                    result: Array.isArray(testInventory)
+                },
+                {
+                    name: 'Test souls inizializzato',
+                    result: typeof testSouls === 'number'
+                },
+                {
+                    name: 'Test canCraft function',
+                    result: typeof testCanCraft === 'function'
+                },
+                {
+                    name: 'Test craftItem function',
+                    result: typeof testCraftItem === 'function'
+                }
+            ];
+            
+            let successCount = 0;
+            
+            tests.forEach(test => {
+                const div = document.createElement('div');
+                div.className = test.result ? 'success' : 'error';
+                div.textContent = `${test.result ? '✅' : '❌'} ${test.name}`;
+                results.appendChild(div);
+                if (test.result) successCount++;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = 'info';
+            summary.textContent = `📊 Funzioni base: ${successCount}/${tests.length} test superati`;
+            results.appendChild(summary);
+        }
+        
+        // Test ricette
+        function testRecipes() {
+            const results = document.getElementById('recipe-test');
+            results.innerHTML = '';
+            
+            const recipes = Object.keys(testCraftingRecipes);
+            let successCount = 0;
+            
+            recipes.forEach(recipeName => {
+                const recipe = testCraftingRecipes[recipeName];
+                const hasIngredients = recipe.ingredients && recipe.ingredients.length > 0;
+                const hasSoulsCost = typeof recipe.soulsCost === 'number' && recipe.soulsCost >= 0;
+                const hasDescription = recipe.description && recipe.description.length > 0;
+                
+                const div = document.createElement('div');
+                div.className = 'status-display';
+                div.innerHTML = `
+                    <h3>${recipeName}</h3>
+                    <p>Ingredienti: ${hasIngredients ? '✅' : '❌'} ${recipe.ingredients.join(', ')}</p>
+                    <p>Costo anime: ${hasSoulsCost ? '✅' : '❌'} ${recipe.soulsCost}</p>
+                    <p>Descrizione: ${hasDescription ? '✅' : '❌'} ${recipe.description}</p>
+                `;
+                results.appendChild(div);
+                
+                if (hasIngredients && hasSoulsCost && hasDescription) successCount++;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = 'info';
+            summary.textContent = `📊 Ricette valide: ${successCount}/${recipes.length}`;
+            results.appendChild(summary);
+        }
+        
+        // Test crafting
+        function testCrafting() {
+            const results = document.getElementById('crafting-test');
+            results.innerHTML = '';
+            
+            // Aggiungi ingredienti di test
+            const testIngredients = [
+                "Erba Curativa", "Acqua Pura", "Erba di Forza", "Cristallo di Potenza",
+                "Amuleto Antico", "Pergamena di Rune", "Gemma Preziosa", "Erba Rara", "Cristallo di Anima"
+            ];
+            
+            testIngredients.forEach(ingredient => {
+                if (!testInventory.includes(ingredient)) {
+                    testInventory.push(ingredient);
+                }
+            });
+            
+            testSouls = 200;
+            
+            const recipes = Object.keys(testCraftingRecipes);
+            let successCount = 0;
+            
+            recipes.forEach(recipeName => {
+                const canCraft = testCanCraft(recipeName);
+                const result = testCraftItem(recipeName);
+                
+                const div = document.createElement('div');
+                div.className = 'status-display';
+                div.innerHTML = `
+                    <h3>${recipeName}</h3>
+                    <p>Craftabile: ${canCraft ? '✅' : '❌'}</p>
+                    <p>Risultato: ${result.success ? '✅' : '❌'} ${result.message}</p>
+                `;
+                results.appendChild(div);
+                
+                if (result.success) successCount++;
+            });
+            
+            const summary = document.createElement('div');
+            summary.className = 'info';
+            summary.textContent = `📊 Crafting riusciti: ${successCount}/${recipes.length}`;
+            results.appendChild(summary);
+        }
+        
+        // Simulazione completa
+        function simulateCrafting() {
+            const results = document.getElementById('simulation-test');
+            results.innerHTML = '';
+            
+            // Reset
+            testInventory = [];
+            testSouls = 0;
+            
+            const steps = [
+                { action: 'Aggiungi ingredienti', items: ["Erba Curativa", "Acqua Pura"] },
+                { action: 'Aggiungi anime', souls: 50 },
+                { action: 'Prova crafting', recipe: "Pozione di Salute" },
+                { action: 'Verifica risultato', check: 'inventory' }
+            ];
+            
+            steps.forEach((step, index) => {
+                const div = document.createElement('div');
+                div.className = 'status-display';
+                
+                if (step.action === 'Aggiungi ingredienti') {
+                    step.items.forEach(item => testInventory.push(item));
+                    div.innerHTML = `<h3>Passo ${index + 1}: ${step.action}</h3><p>✅ Aggiunti: ${step.items.join(', ')}</p>`;
+                } else if (step.action === 'Aggiungi anime') {
+                    testSouls += step.souls;
+                    div.innerHTML = `<h3>Passo ${index + 1}: ${step.action}</h3><p>✅ Anime: ${testSouls}</p>`;
+                } else if (step.action === 'Prova crafting') {
+                    const result = testCraftItem(step.recipe);
+                    div.innerHTML = `<h3>Passo ${index + 1}: ${step.action}</h3><p>${result.success ? '✅' : '❌'} ${result.message}</p>`;
+                } else if (step.action === 'Verifica risultato') {
+                    const hasItem = testInventory.includes(step.recipe);
+                    div.innerHTML = `<h3>Passo ${index + 1}: ${step.action}</h3><p>${hasItem ? '✅' : '❌'} Oggetto nell'inventario</p>`;
+                }
+                
+                results.appendChild(div);
+            });
+        }
+        
+        // Mostra stato
+        function showStatus() {
+            const results = document.getElementById('status-display');
+            results.innerHTML = '';
+            
+            const status = [
+                { label: 'Anime disponibili', value: testSouls },
+                { label: 'Oggetti inventario', value: testInventory.length },
+                { label: 'Ricette disponibili', value: Object.keys(testCraftingRecipes).length },
+                { label: 'Ricette craftabili', value: Object.keys(testCraftingRecipes).filter(r => testCanCraft(r)).length }
+            ];
+            
+            status.forEach(stat => {
+                const div = document.createElement('div');
+                div.className = 'status-display';
+                div.innerHTML = `<strong>${stat.label}:</strong> ${stat.value}`;
+                results.appendChild(div);
+            });
+            
+            if (testInventory.length > 0) {
+                const inventoryDiv = document.createElement('div');
+                inventoryDiv.className = 'status-display';
+                inventoryDiv.innerHTML = `<strong>Inventario:</strong> ${testInventory.join(', ')}`;
+                results.appendChild(inventoryDiv);
+            }
+        }
+        
+        // Esegui test automatici all'avvio
+        window.onload = function() {
+            setTimeout(() => {
+                testBasicFunctions();
+                testRecipes();
+                showStatus();
+            }, 500);
+        };
+    </script>
+</body>
+</html> 

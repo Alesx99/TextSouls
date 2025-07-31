@@ -1409,6 +1409,225 @@
                 margin: 6px 0;
             }
         }
+
+        /* Stili per inventario migliorato */
+        #inventory-list li {
+            background: var(--ds-black-light);
+            border: 1px solid var(--ds-stone);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        #inventory-list li:hover {
+            background: var(--ds-stone-dark);
+            border-color: var(--ds-gold);
+            transform: translateX(5px);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .item-name {
+            font-weight: bold;
+            color: var(--ds-gold);
+        }
+
+        .item-type {
+            font-size: 0.8em;
+            color: var(--ds-stone-light);
+            background: var(--ds-stone-dark);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .item-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .item-effect {
+            color: var(--ds-gold-light);
+        }
+
+        .item-rarity {
+            font-size: 0.8em;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+
+        .rarity-comune { background: var(--ds-stone); color: var(--ds-black); }
+        .rarity-raro { background: var(--ds-gold-dark); color: var(--ds-black); }
+        .rarity-epico { background: var(--ds-magic); color: white; }
+        .rarity-leggendario { background: var(--ds-gold); color: var(--ds-black); }
+        .rarity-mito { background: linear-gradient(45deg, var(--ds-gold), var(--ds-magic)); color: white; }
+
+        /* Stili per menu crafting */
+        .crafting-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .crafting-menu {
+            background: var(--ds-black);
+            border: 2px solid var(--ds-gold);
+            border-radius: 10px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 0 0 20px var(--ds-gold-glow);
+        }
+
+        .crafting-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--ds-gold);
+            padding-bottom: 10px;
+        }
+
+        .crafting-header h2 {
+            color: var(--ds-gold);
+            margin: 0;
+        }
+
+        .close-button {
+            background: var(--ds-blood);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+        }
+
+        .recipe-item {
+            background: var(--ds-black-light);
+            border: 1px solid var(--ds-stone);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .recipe-item.available {
+            border-color: var(--ds-gold);
+            background: var(--ds-black-light);
+        }
+
+        .recipe-item.unavailable {
+            border-color: var(--ds-stone);
+            background: var(--ds-black-dark);
+            opacity: 0.7;
+        }
+
+        .recipe-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .recipe-header h3 {
+            color: var(--ds-gold);
+            margin: 0;
+        }
+
+        .recipe-cost {
+            color: var(--ds-gold-light);
+            font-weight: bold;
+        }
+
+        .recipe-ingredients {
+            margin: 10px 0;
+            color: var(--ds-stone-light);
+        }
+
+        .ingredient {
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin: 0 2px;
+        }
+
+        .ingredient.available {
+            background: var(--ds-gold-dark);
+            color: var(--ds-black);
+        }
+
+        .ingredient.missing {
+            background: var(--ds-stone);
+            color: var(--ds-black);
+            text-decoration: line-through;
+        }
+
+        .recipe-effect {
+            margin: 10px 0;
+            color: var(--ds-gold-light);
+            font-style: italic;
+        }
+
+        .craft-button {
+            background: var(--ds-gold);
+            color: var(--ds-black);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .craft-button:hover {
+            background: var(--ds-gold-light);
+            transform: scale(1.05);
+        }
+
+        .crafting-requirements {
+            color: var(--ds-blood);
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .crafting-stats {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--ds-stone);
+        }
+
+        .crafting-stats h3 {
+            color: var(--ds-gold);
+            margin-bottom: 10px;
+        }
+
+        .crafting-stats p {
+            color: var(--ds-stone-light);
+            margin: 5px 0;
+        }
+
+        .souls-available, .unique-ingredients, .available-recipes {
+            color: var(--ds-gold);
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -1472,6 +1691,12 @@
                 </div>
                 <div class="status-item">
                     <span>Anime:</span> <span id="souls-display"></span>
+                </div>
+                <div class="status-item">
+                    <span>Karma:</span> <span id="karma-display"></span>
+                </div>
+                <div class="status-item">
+                    <span>Difficoltà:</span> <span id="difficulty-display"></span>
                 </div>
             </div>
             <div class="status-section">
@@ -2004,6 +2229,349 @@
             }
         };
 
+        // ============================================================================
+        // SISTEMA DI MEMORIA DELLE SCELTE - PRIORITÀ CRITICA
+        // ============================================================================
+        
+        const choiceMemory = {
+            // Mappa delle scelte fatte dal giocatore
+            choices: new Map(),
+            
+            // Storia delle scelte per analisi
+            choiceHistory: [],
+            
+            // Record delle scelte con timestamp e conseguenze
+            recordChoice: function(sceneId, choiceId, karmaEffect, additionalData = {}) {
+                const choiceKey = `${sceneId}_${choiceId}`;
+                const choiceRecord = {
+                    sceneId: sceneId,
+                    choiceId: choiceId,
+                    karmaEffect: karmaEffect,
+                    timestamp: Date.now(),
+                    consequences: [],
+                    additionalData: additionalData
+                };
+                
+                this.choices.set(choiceKey, choiceRecord);
+                this.choiceHistory.push(choiceRecord);
+                
+                console.log(`Scelta registrata: ${sceneId} -> ${choiceId} (Karma: ${karmaEffect})`);
+                
+                // Applica conseguenze immediate
+                this.applyChoiceConsequences(choiceRecord);
+            },
+            
+            // Verifica se una scelta è stata fatta
+            hasMadeChoice: function(sceneId, choiceId) {
+                const choiceKey = `${sceneId}_${choiceId}`;
+                return this.choices.has(choiceKey);
+            },
+            
+            // Ottieni la storia completa delle scelte
+            getChoiceHistory: function() {
+                return Array.from(this.choices.entries());
+            },
+            
+            // Ottieni scelte per una scena specifica
+            getChoicesForScene: function(sceneId) {
+                const sceneChoices = [];
+                this.choices.forEach((choice, key) => {
+                    if (choice.sceneId === sceneId) {
+                        sceneChoices.push(choice);
+                    }
+                });
+                return sceneChoices;
+            },
+            
+            // Applica conseguenze delle scelte
+            applyChoiceConsequences: function(choiceRecord) {
+                // Sblocca scene basate su scelte precedenti
+                this.checkChoiceUnlocks(choiceRecord);
+                
+                // Modifica dialoghi NPC basati su scelte
+                this.updateNPCDialogs(choiceRecord);
+                
+                // Evolvi oggetti basati su uso
+                this.evolveItems(choiceRecord);
+            },
+            
+            // Controlla sblocchi basati su scelte
+            checkChoiceUnlocks: function(choiceRecord) {
+                const unlockRules = {
+                    'cellaIniziale_explore_cell': {
+                        unlocks: ['personal_items', 'guardian_revelation'],
+                        blocks: ['ignorance_path']
+                    },
+                    'esploraCella_study_runes': {
+                        unlocks: ['ancient_knowledge', 'rune_mastery'],
+                        blocks: ['ignorance_voluntary']
+                    },
+                    'salaGolem_communicate': {
+                        unlocks: ['golem_ally', 'ancient_secrets'],
+                        blocks: ['golem_enemy']
+                    }
+                };
+                
+                const ruleKey = `${choiceRecord.sceneId}_${choiceRecord.choiceId}`;
+                const rule = unlockRules[ruleKey];
+                
+                if (rule) {
+                    if (rule.unlocks) {
+                        rule.unlocks.forEach(scene => {
+                            consequenceSystem.unlockedScenes.add(scene);
+                            console.log(`Scena sbloccata per scelta: ${scene}`);
+                        });
+                    }
+                    if (rule.blocks) {
+                        rule.blocks.forEach(scene => {
+                            consequenceSystem.blockedScenes.add(scene);
+                            console.log(`Scena bloccata per scelta: ${scene}`);
+                        });
+                    }
+                }
+            },
+            
+            // Aggiorna dialoghi NPC basati su scelte
+            updateNPCDialogs: function(choiceRecord) {
+                const dialogChanges = {
+                    'cellaIniziale_explore_cell': {
+                        'veggente': 'friendly',
+                        'guardiano': 'friendly'
+                    },
+                    'esploraCella_study_runes': {
+                        'veggente': 'neutral',
+                        'guardiano': 'neutral'
+                    },
+                    'salaGolem_communicate': {
+                        'veggente': 'friendly',
+                        'guardiano': 'friendly'
+                    }
+                };
+                
+                const changeKey = `${choiceRecord.sceneId}_${choiceRecord.choiceId}`;
+                const changes = dialogChanges[changeKey];
+                
+                if (changes) {
+                    Object.keys(changes).forEach(npc => {
+                        consequenceSystem.updateNPCDialog(npc, changes[npc]);
+                    });
+                }
+            },
+            
+            // Evolvi oggetti basati su uso
+            evolveItems: function(choiceRecord) {
+                const itemEvolutions = {
+                    'frammento_specchio_use': {
+                        item: 'Frammento di Specchio',
+                        evolution: 'Frammento di Specchio Risplendente',
+                        effect: 'Evoca flashback più intensi'
+                    },
+                    'rune_study': {
+                        item: 'Conoscenza delle Rune',
+                        evolution: 'Maestria delle Rune',
+                        effect: 'Decifra rune più complesse'
+                    }
+                };
+                
+                const evolutionKey = `${choiceRecord.sceneId}_${choiceRecord.choiceId}`;
+                const evolution = itemEvolutions[evolutionKey];
+                
+                if (evolution && inventory.includes(evolution.item)) {
+                    const index = inventory.indexOf(evolution.item);
+                    inventory[index] = evolution.evolution;
+                    showNotification(`✨ ${evolution.item} si è evoluto in ${evolution.evolution}!`, 'achievement', 4000);
+                    console.log(`Oggetto evoluto: ${evolution.item} -> ${evolution.evolution}`);
+                }
+            },
+            
+            // Ottieni statistiche delle scelte
+            getChoiceStats: function() {
+                const stats = {
+                    totalChoices: this.choiceHistory.length,
+                    positiveKarmaChoices: 0,
+                    negativeKarmaChoices: 0,
+                    neutralChoices: 0,
+                    mostFrequentScene: null,
+                    averageKarmaEffect: 0
+                };
+                
+                let totalKarma = 0;
+                const sceneCounts = {};
+                
+                this.choiceHistory.forEach(choice => {
+                    totalKarma += choice.karmaEffect;
+                    
+                    if (choice.karmaEffect > 0) stats.positiveKarmaChoices++;
+                    else if (choice.karmaEffect < 0) stats.negativeKarmaChoices++;
+                    else stats.neutralChoices++;
+                    
+                    sceneCounts[choice.sceneId] = (sceneCounts[choice.sceneId] || 0) + 1;
+                });
+                
+                stats.averageKarmaEffect = this.choiceHistory.length > 0 ? totalKarma / this.choiceHistory.length : 0;
+                
+                // Trova la scena più frequente
+                let maxCount = 0;
+                Object.keys(sceneCounts).forEach(scene => {
+                    if (sceneCounts[scene] > maxCount) {
+                        maxCount = sceneCounts[scene];
+                        stats.mostFrequentScene = scene;
+                    }
+                });
+                
+                return stats;
+            }
+        };
+
+        // ============================================================================
+        // SISTEMA DI SCENE EVOLUTIVE - PRIORITÀ CRITICA
+        // ============================================================================
+        
+        const evolvingScenes = {
+            // Stati delle scene che cambiano nel tempo
+            sceneStates: new Map(),
+            
+            // Regole di evoluzione per ogni scena
+            evolutionRules: {
+                'cellaIniziale': {
+                    states: {
+                        'initial': {
+                            description: "Ti risvegli su un giaciglio di paglia putrescente, il corpo indolenzito da un sonno che sembra essere durato un'eternità. Le pareti di pietra grezza della cella sono ricoperte di rune antiche che pulsano di una luce sinistra, e l'aria è pesante dell'odore di morte e disperazione.\n\nUn piccolo spiraglio in alto lascia filtrare una luce grigia e malaticcia, l'unico segno che esiste ancora un mondo al di fuori di queste mura. Ma è la sensazione più strana che ti tormenta: un vuoto nel petto, come se qualcosa di fondamentale ti fosse stato strappato via.\n\nI tuoi occhi si posano su una parete dove, tra le rune, riconosci il tuo nome inciso con mano tremante: \"Aric\". È tutto quello che ricordi di te stesso.",
+                            choices: ['explore_cell', 'concentrate_memories', 'cry_for_help']
+                        },
+                        'after_flashback': {
+                            description: "La cella ora ti sembra diversa. Le rune sulle pareti non sono più solo decorazioni sinistre, ma portatrici di un messaggio che solo tu puoi comprendere. Il tuo nome \"Aric\" inciso sulla parete risplende con una luce interiore, come se stesse cercando di comunicare con te.\n\nIl vuoto nel petto ora ha un nome: è la mancanza della tua anima completa, strappata via dalla maledizione che tu stesso hai creato. Ogni respiro ti porta più vicino alla verità, anche se quella verità potrebbe distruggerti.",
+                            choices: ['explore_cell_deep', 'accept_truth', 'deny_memory']
+                        },
+                        'after_rune_discovery': {
+                            description: "Le rune ora danzano davanti ai tuoi occhi, raccontando la storia di Eldoria e del tuo ruolo come Guardiano delle Anime. La cella non è più una prigione, ma un luogo sacro dove hai iniziato il tuo viaggio di redenzione.\n\nIl nome \"Aric\" sulla parete ora brilla con l'energia delle anime che hai protetto, e le rune circostanti formano un pattern che riconosci: è il sigillo della maledizione che hai creato cento anni fa.",
+                            choices: ['embrace_power', 'seek_redemption', 'study_deeper']
+                        },
+                        'after_acceptance': {
+                            description: "La cella si è trasformata completamente. Le rune pulsano con la tua energia di Guardiano, e l'aria stessa sembra vibrare con il potere delle anime che hai protetto. Questo non è più il luogo del tuo risveglio confuso, ma il sacrario dove hai accettato il tuo destino.\n\nIl nome \"Aric\" ora risplende come una stella, e le pareti sono ricoperte di simboli che solo un Guardiano delle Anime può comprendere. La cella è diventata il tuo punto di potere.",
+                            choices: ['channel_energy', 'plan_redemption', 'commune_spirits']
+                        }
+                    },
+                    triggers: {
+                        'memory_flashback': 'after_flashback',
+                        'rune_study': 'after_rune_discovery',
+                        'truth_acceptance': 'after_acceptance'
+                    }
+                },
+                'salaGolem': {
+                    states: {
+                        'initial': {
+                            description: "Il ronzio si fa più forte. Entri in una grande sala. Al centro, un imponente Golem di pietra, ricoperto di muschio, blocca il passaggio principale. I suoi occhi di giada si accendono al tuo arrivo.",
+                            choices: ['attack_golem', 'find_weakness', 'try_bypass']
+                        },
+                        'after_communication': {
+                            description: "Il Golem non è più un nemico, ma un custode antico che riconosce in te un Guardiano delle Anime. I suoi occhi di giada brillano con intelligenza, e le rune sul suo petto pulsano in risposta alla tua presenza.\n\nAttraverso le rune, riesci a comunicare con lui. È stato creato per proteggere i segreti di Eldoria, e ora che ha riconosciuto la tua vera natura, è disposto ad aiutarti nel tuo viaggio di redenzione.",
+                            choices: ['commune_golem', 'learn_secrets', 'request_help']
+                        },
+                        'after_alliance': {
+                            description: "Il Golem è ora il tuo alleato più fedele. Le rune sul suo petto brillano con l'energia delle anime che protegge, e la sala stessa sembra risuonare con il potere antico dei Guardiani.\n\nAttraverso la connessione runica, il Golem ti rivela i segreti più profondi di Eldoria e ti guida verso la comprensione della maledizione che hai creato.",
+                            choices: ['receive_wisdom', 'plan_liberation', 'strengthen_bond']
+                        },
+                        'after_corruption': {
+                            description: "Il Golem è stato corrotto dal tuo karma negativo. I suoi occhi di giada ora brillano di una luce sinistra, e le rune sul suo petto pulsano con energia oscura.\n\nRiconosce in te un Guardiano delle Anime, ma la tua corruzione lo ha trasformato in un guardiano del male. È ancora potente, ma ora serve il lato oscuro della maledizione.",
+                            choices: ['fight_corrupted', 'embrace_darkness', 'attempt_purification']
+                        }
+                    },
+                    triggers: {
+                        'communicate_golem': 'after_communication',
+                        'ally_golem': 'after_alliance',
+                        'corrupt_golem': 'after_corruption'
+                    }
+                },
+                'terreSelvagge': {
+                    states: {
+                        'initial': {
+                            description: "Il vento ti accarezza il viso mentre esci all'aperto. Ti trovi in un vasto altopiano roccioso, costellato di arbusti secchi e imponenti formazioni rocciose. All'orizzonte, vedi le luci di quella che sembra una piccola città.",
+                            choices: ['go_to_city', 'explore_ruins', 'search_resources']
+                        },
+                        'karma_high': {
+                            description: "Le Terre Selvagge si sono trasformate sotto l'influenza del tuo karma positivo. I fiori selvatici sbocciano tra le rocce, e l'aria stessa sembra più pura e vivificante. Le creature che incontri non sono più ostili, ma guardano con rispetto la tua aura di Guardiano delle Anime.\n\nIl mondo risponde alla tua bontà, e anche le rovine sembrano meno sinistre, come se la speranza stesse tornando a Eldoria.",
+                            choices: ['bless_land', 'heal_creatures', 'spread_hope']
+                        },
+                        'karma_low': {
+                            description: "Le Terre Selvagge si sono corrotte sotto l'influenza del tuo karma negativo. L'aria è pesante di energia oscura, e le creature che incontri sono più aggressive e corrotte. Le rovine sembrano più sinistre, e l'atmosfera è carica di male.\n\nIl mondo risponde alla tua corruzione, e anche la natura sembra piegarsi al potere oscuro che hai abbracciato.",
+                            choices: ['corrupt_further', 'dominate_creatures', 'spread_fear']
+                        },
+                        'karma_neutral': {
+                            description: "Le Terre Selvagge mantengono il loro equilibrio naturale. Non sono né benedette né corrotte, ma riflettono la tua saggezza e comprensione. Le creature ti rispettano per la tua saggezza, e le rovine custodiscono i loro segreti in attesa di essere scoperti.\n\nIl mondo risponde alla tua saggezza, e l'equilibrio tra bene e male si mantiene perfetto.",
+                            choices: ['seek_balance', 'study_nature', 'maintain_harmony']
+                        }
+                    },
+                    triggers: {
+                        'karma_positive': 'karma_high',
+                        'karma_negative': 'karma_low',
+                        'karma_neutral': 'karma_neutral'
+                    }
+                }
+            },
+            
+            // Aggiorna lo stato di una scena
+            updateSceneState: function(sceneId, newState) {
+                this.sceneStates.set(sceneId, newState);
+                console.log(`Stato scena ${sceneId} aggiornato a: ${newState}`);
+            },
+            
+            // Ottieni lo stato corrente di una scena
+            getSceneState: function(sceneId) {
+                return this.sceneStates.get(sceneId) || 'initial';
+            },
+            
+            // Verifica se una scena è cambiata
+            hasSceneChanged: function(sceneId) {
+                return this.sceneStates.has(sceneId);
+            },
+            
+            // Ottieni la descrizione evoluta di una scena
+            getEvolvedDescription: function(sceneId) {
+                const rule = this.evolutionRules[sceneId];
+                if (!rule) return null;
+                
+                const currentState = this.getSceneState(sceneId);
+                const stateData = rule.states[currentState];
+                
+                return stateData ? stateData.description : null;
+            },
+            
+            // Ottieni le scelte evolute di una scena
+            getEvolvedChoices: function(sceneId) {
+                const rule = this.evolutionRules[sceneId];
+                if (!rule) return null;
+                
+                const currentState = this.getSceneState(sceneId);
+                const stateData = rule.states[currentState];
+                
+                return stateData ? stateData.choices : null;
+            },
+            
+            // Controlla trigger di evoluzione
+            checkEvolutionTriggers: function(sceneId, action) {
+                const rule = this.evolutionRules[sceneId];
+                if (!rule || !rule.triggers) return;
+                
+                const trigger = rule.triggers[action];
+                if (trigger) {
+                    this.updateSceneState(sceneId, trigger);
+                    console.log(`Trigger attivato per ${sceneId}: ${action} -> ${trigger}`);
+                }
+            },
+            
+            // Applica evoluzione basata su karma
+            applyKarmaEvolution: function(sceneId) {
+                const currentKarma = karmaSystem.currentKarma;
+                let karmaState = 'karma_neutral';
+                
+                if (currentKarma > 30) karmaState = 'karma_positive';
+                else if (currentKarma < -30) karmaState = 'karma_negative';
+                
+                this.checkEvolutionTriggers(sceneId, karmaState);
+            }
+        };
+
         function showNotification(message, type = 'info', duration = 3000) {
             notificationQueue.push({ message, type, duration });
             if (!isShowingNotification) {
@@ -2126,6 +2694,166 @@
             showNotification(message, 'souls', 2000);
         }
 
+        // NUOVE FUNZIONI SPECIFICHE PER TIPI DI NOTIFICHE
+        function showCraftingNotification(itemName) {
+            const message = `⚒️ CRAFTING COMPLETATO: ${itemName}!`;
+            showNotification(message, 'achievement', 3000);
+        }
+
+        function showEscapeNotification(success, damage = 0) {
+            if (success) {
+                const message = damage > 0 ? `🏃 Fuga riuscita! Hai subito ${damage} danni durante la fuga.` : '🏃 Fuga riuscita!';
+                showNotification(message, 'heal', 3000);
+            } else {
+                const message = `❌ Fuga fallita! Hai subito ${damage} danni aggiuntivi.`;
+                showNotification(message, 'damage', 3000);
+            }
+        }
+
+        function showHealthWarningNotification() {
+            const message = '⚠️ Sei troppo debole per fuggire! Salute insufficiente.';
+            showNotification(message, 'damage', 4000);
+        }
+
+        function showMemoryNotification(memoryType) {
+            const messages = {
+                'frammento': '🧠 Hai ottenuto un Frammento di Memoria!',
+                'conoscenza': '📚 Hai ottenuto la Conoscenza del Passato!',
+                'ricordi': '💭 Hai recuperato ricordi parziali!',
+                'verità': '🔮 I sogni ti hanno rivelato la verità!'
+            };
+            const message = messages[memoryType] || '🧠 Nuova memoria scoperta!';
+            showNotification(message, 'achievement', 4000);
+        }
+
+        function showLocationNotification(locationName, action = 'scoperto') {
+            const message = `🗺️ ${locationName} ${action}!`;
+            showNotification(message, 'achievement', 3000);
+        }
+
+        function showCombatNotification(enemyName, result, damage = 0) {
+            let message;
+            if (result === 'victory') {
+                message = `⚔️ Hai sconfitto ${enemyName}!`;
+            } else if (result === 'damage') {
+                message = `⚔️ ${enemyName} ti ha attaccato! Hai subito ${damage} danni.`;
+            } else if (result === 'weakened') {
+                message = `⚔️ ${enemyName} è stato indebolito!`;
+            }
+            showNotification(message, result === 'victory' ? 'achievement' : 'damage', 3000);
+        }
+
+        // SISTEMA ACHIEVEMENT MIGLIORATO
+        const achievementSystem = {
+            achievements: {
+                'soul_liberator': {
+                    title: 'Liberatore di Anime',
+                    description: 'Hai liberato 100 anime perdute',
+                    karmaBonus: 20,
+                    soulsReward: 50
+                },
+                'rune_scholar': {
+                    title: 'Studioso delle Rune',
+                    description: 'Hai decifrato 5 rune antiche',
+                    karmaBonus: 15,
+                    soulsReward: 30
+                },
+                'golem_friend': {
+                    title: 'Amico del Golem',
+                    description: 'Hai fatto pace con il Golem di Pietra Antica',
+                    karmaBonus: 25,
+                    soulsReward: 40
+                },
+                'memory_keeper': {
+                    title: 'Custode della Memoria',
+                    description: 'Hai recuperato tutti i frammenti di memoria',
+                    karmaBonus: 30,
+                    soulsReward: 60
+                },
+                'curse_breaker': {
+                    title: 'Spezzatore di Maledizioni',
+                    description: 'Hai rotto il ciclo della maledizione',
+                    karmaBonus: 50,
+                    soulsReward: 100
+                },
+                'dark_ascension': {
+                    title: 'Ascensione delle Tenebre',
+                    description: 'Hai abbracciato il potere oscuro',
+                    karmaBonus: -30,
+                    soulsReward: 80
+                },
+                'survival_sage': {
+                    title: 'Saggio della Sopravvivenza',
+                    description: 'Hai trovato l\'equilibrio tra luce e ombra',
+                    karmaBonus: 10,
+                    soulsReward: 40
+                },
+                'explorer': {
+                    title: 'Esploratore Infaticabile',
+                    description: 'Hai visitato tutti i luoghi principali',
+                    karmaBonus: 15,
+                    soulsReward: 35
+                },
+                'craftsman': {
+                    title: 'Artigiano Abile',
+                    description: 'Hai completato 5 crafting',
+                    karmaBonus: 10,
+                    soulsReward: 25
+                },
+                'guardian': {
+                    title: 'Guardiano Riconosciuto',
+                    description: 'Hai accettato il tuo ruolo di Guardiano delle Anime',
+                    karmaBonus: 20,
+                    soulsReward: 45
+                }
+            },
+
+            unlockedAchievements: new Set(),
+
+            unlockAchievement: function(achievementId) {
+                const achievement = this.achievements[achievementId];
+                if (achievement && !this.unlockedAchievements.has(achievementId)) {
+                    this.unlockedAchievements.add(achievementId);
+                    
+                    // Applica bonus
+                    if (achievement.karmaBonus) {
+                        karmaSystem.addKarma(achievement.karmaBonus);
+                    }
+                    if (achievement.soulsReward) {
+                        souls += achievement.soulsReward;
+                        updateUI();
+                    }
+
+                    // Mostra notifica achievement
+                    showDetailedAchievement(achievement.title, achievement.description);
+                    
+                    console.log(`Achievement sbloccato: ${achievement.title}`);
+                }
+            },
+
+            checkAchievements: function() {
+                // Controlla achievement basati su statistiche
+                if (souls >= 100 && !this.unlockedAchievements.has('soul_liberator')) {
+                    this.unlockAchievement('soul_liberator');
+                }
+                
+                // Altri controlli achievement...
+            },
+
+            getAchievementProgress: function(achievementId) {
+                const achievement = this.achievements[achievementId];
+                if (!achievement) return 0;
+                
+                // Logica per calcolare progresso achievement
+                return this.unlockedAchievements.has(achievementId) ? 100 : 0;
+            }
+        };
+
+        // Sostituisce la funzione showAchievementNotification esistente
+        function showAchievementNotification(achievementName) {
+            showDetailedAchievement(achievementName, 'Hai completato un obiettivo importante!');
+        }
+
         // Sistema barre stato avanzate
         function updateHealthBar() {
             const healthBar = document.getElementById('health-bar');
@@ -2162,6 +2890,30 @@
                 } else {
                     soulsBar.style.backgroundColor = 'var(--ds-gold-dark)';
                     soulsBar.style.boxShadow = 'none';
+                }
+            }
+        }
+
+        function updateKarmaDisplay() {
+            const karmaDisplay = document.getElementById('karma-display');
+            if (karmaDisplay && typeof karmaSystem !== 'undefined') {
+                const karma = karmaSystem.currentKarma;
+                const maxKarma = karmaSystem.maxKarma;
+                
+                // Formatta il karma con segno
+                const karmaText = karma >= 0 ? `+${karma}` : `${karma}`;
+                karmaDisplay.textContent = `${karmaText}/${maxKarma}`;
+                
+                // Colori basati sul karma
+                if (karma > 20) {
+                    karmaDisplay.style.color = 'var(--ds-gold)';
+                    karmaDisplay.style.textShadow = '0 0 5px var(--ds-gold-glow)';
+                } else if (karma < -20) {
+                    karmaDisplay.style.color = 'var(--ds-blood)';
+                    karmaDisplay.style.textShadow = '0 0 5px var(--ds-blood-glow)';
+                } else {
+                    karmaDisplay.style.color = 'var(--ds-stone-light)';
+                    karmaDisplay.style.textShadow = 'none';
                 }
             }
         }
@@ -2280,8 +3032,8 @@
         // Oggetto che definisce le scene del gioco
         const scenes = {
             cellaIniziale: {
-                title: "Il Risveglio nella Prigione",
-                text: "Ti risvegli su un giaciglio di paglia putrescente, il corpo indolenzito da un sonno che sembra essere durato un'eternità. Le pareti di pietra grezza della cella sono ricoperte di rune antiche che pulsano di una luce sinistra, e l'aria è pesante dell'odore di morte e disperazione.\n\nUn piccolo spiraglio in alto lascia filtrare una luce grigia e malaticcia, l'unico segno che esiste ancora un mondo al di fuori di queste mura. Ma è la sensazione più strana che ti tormenta: un vuoto nel petto, come se qualcosa di fondamentale ti fosse stato strappato via.\n\nI tuoi occhi si posano su una parete dove, tra le rune, riconosci il tuo nome inciso con mano tremante: \"Aric\". È tutto quello che ricordi di te stesso.",
+                title: "Il Risveglio di Aric",
+                text: "Ti risvegli su un giaciglio di paglia putrescente, il corpo indolenzito da un sonno che sembra essere durato un'eternità. Le pareti di pietra grezza della cella sono ricoperte di rune antiche che pulsano di una luce sinistra, e l'aria è pesante dell'odore di morte e disperazione.\n\nUn piccolo spiraglio in alto lascia filtrare una luce grigia e malaticcia, l'unico segno che esiste ancora un mondo al di fuori di queste mura. Ma è la sensazione più strana che ti tormenta: un vuoto nel petto, come se qualcosa di fondamentale ti fosse stato strappato via.\n\nI tuoi occhi si posano su una parete dove, tra le rune, riconosci il tuo nome inciso con mano tremante: \"Aric Valenheart\". Il cognome ti suona familiare, come un'eco di un passato che non riesci a ricordare. Le rune intorno al tuo nome sembrano pulsare con una luce più intensa, come se riconoscessero qualcosa in te che tu stesso hai dimenticato.",
                 onEnter: function() {
                     // Inizializza il sistema di karma se non esiste
                     if (typeof karmaSystem === 'undefined') {
@@ -2333,7 +3085,7 @@
             },
             esploraCella: {
                 title: "Esplorazione della Cella",
-                text: "Scivoli lungo le pareti come un'ombra in cerca di risposte, sentendo la pietra fredda e scivolosa sotto le dita. Ogni runa incisa sembra pulsare con una vita propria, raccontando storie di un passato che non riesci a ricordare.\n\nIn un angolo, dietro un mucchio di detriti che sembrano i resti di un'antica battaglia, noti una fessura nel muro, quasi impercettibile. Ma è l'oggetto accanto che cattura la tua attenzione: un frammento di specchio, così piccolo da sembrare insignificante, eppure qualcosa in esso ti chiama.\n\nL'aria qui è ancora più pesante, satura di memorie che non sono tue, eppure ti appartengono. Ogni respiro ti porta più vicino alla verità, anche se quella verità potrebbe distruggerti.",
+                text: "Scivoli lungo le pareti come un'ombra in cerca di risposte, sentendo la pietra fredda e scivolosa sotto le dita. Ogni runa incisa sembra pulsare con una vita propria, raccontando storie di un passato che non riesci a ricordare.\n\nIn un angolo, dietro un mucchio di detriti che sembrano i resti di un'antica battaglia, noti una fessura nel muro, quasi impercettibile. Ma è l'oggetto accanto che cattura la tua attenzione: un frammento di specchio, così piccolo da sembrare insignificante, eppure qualcosa in esso ti chiama.\n\nQuando lo raccogli, il frammento si riscalda tra le tue dita e per un momento vedi riflessa una donna dai capelli scuri e gli occhi verdi. Il suo volto ti è familiare, ma il nome sfugge alla tua memoria. L'aria qui è ancora più pesante, satura di memorie che non sono tue, eppure ti appartengono. Ogni respiro ti porta più vicino alla verità, anche se quella verità potrebbe distruggerti.",
                 onEnter: function() {
                     // Inizializza il sistema di karma se non esiste
                     if (typeof karmaSystem === 'undefined') {
@@ -2352,6 +3104,8 @@
                                 if (typeof karmaSystem !== 'undefined') {
                                     karmaSystem.addKarma(10); // Scoperta importante
                                 }
+                                // Trigger flashback di Lyra
+                                showMemoryNotification('frammento');
                             });
                         }
                     },
@@ -3153,7 +3907,7 @@
                 onEnter: () => {
                     // Fuga disponibile solo con salute > 20 e 50% di probabilità di fallimento
                     if (playerHealth <= 20) {
-                        alert("Sei troppo debole per fuggire! Salute insufficiente.");
+                        showHealthWarningNotification();
                         loadScene("criptaAntica");
                         return;
                     }
@@ -3347,7 +4101,7 @@
             },
             sceltaOscura: {
                 title: "La Scelta Oscura",
-                text: "La maledizione ti parla direttamente nella mente, la sua voce un sussurro che risuona nelle profondità della tua anima: 'Vedo la tua essenza, viaggiatore. Sei più di quello che credi di essere. Accettami, e ti rivelerò i segreti che gli dei stessi hanno dimenticato. Diventerai parte di me, e io parte di te - una fusione perfetta di potere e conoscenza. La tua anima sarà trasformata, ma avrai accesso a verità che risalgono all'alba del tempo, a poteri arcani che pochi hanno osato sognare.'\n\nIl suo richiamo è come una melodia ipnotica che risuona in ogni fibra del tuo essere, promettendo non solo potere, ma comprensione assoluta.",
+                text: "La maledizione ti parla direttamente nella mente, la sua voce un sussurro che risuona nelle profondità della tua anima: 'Vedi la tua essenza, viaggiatore. Sei più di quello che credi di essere. Accettami, e ti rivelerò i segreti che gli dei stessi hanno dimenticato. Diventerai parte di me, e io parte di te - una fusione perfetta di potere e conoscenza. La tua anima sarà trasformata, ma avrai accesso a verità che risalgono all'alba del tempo, a poteri arcani che pochi hanno osato sognare.'\n\nIl suo richiamo è come una melodia ipnotica che risuona in ogni fibra del tuo essere, promettendo non solo potere, ma comprensione assoluta.",
                 onEnter: () => {
                     souls += 100;
                     updateUI();
@@ -3487,7 +4241,7 @@
                 onEnter: () => {
                     // Fuga disponibile solo con salute > 20 e 50% di probabilità di fallimento
                     if (playerHealth <= 20) {
-                        alert("Sei troppo debole per fuggire! Salute insufficiente.");
+                        showHealthWarningNotification();
                         loadScene("combattiGuardie");
                         return;
                     }
@@ -3720,7 +4474,7 @@
                 text: "Preparati a creare una Pozione di Salute. Hai bisogno di Erba Curativa e Acqua Pura.",
                 onEnter: () => {
                     if (craftItem("Pozione di Salute")) {
-                        alert("Crafting completato con successo!");
+                        showCraftingNotification("Pozione di Salute");
                     }
                 },
                 choices: [
@@ -3733,7 +4487,7 @@
                 text: "Preparati a creare una Pozione di Forza. Hai bisogno di Erba di Forza e Cristallo di Potenza.",
                 onEnter: () => {
                     if (craftItem("Pozione di Forza")) {
-                        alert("Crafting completato con successo!");
+                        showCraftingNotification("Pozione di Forza");
                     }
                 },
                 choices: [
@@ -3746,7 +4500,7 @@
                 text: "Preparati a creare un Amuleto Potenziato. Hai bisogno di Amuleto Antico, Pergamena di Rune e Gemma Preziosa.",
                 onEnter: () => {
                     if (craftItem("Amuleto Potenziato")) {
-                        alert("Crafting completato con successo!");
+                        showCraftingNotification("Amuleto Potenziato");
                     }
                 },
                 choices: [
@@ -3759,7 +4513,7 @@
                 text: "Preparati a creare la Pozione della Cura. Hai bisogno di Erba Rara, Amuleto Antico e Cristallo di Anima.",
                 onEnter: () => {
                     if (craftItem("Pozione della Cura")) {
-                        alert("Crafting completato con successo!");
+                        showCraftingNotification("Pozione della Cura");
                     }
                 },
                 choices: [
@@ -3866,8 +4620,8 @@
                 ]
             },
             frammentoSpecchio: {
-                title: "Il Frammento di Specchio",
-                text: "Il frammento di specchio è più di quello che sembra. Quando lo sollevi, la sua superficie non riflette la tua immagine attuale, ma qualcosa di molto più antico. Per un momento, vedi un uomo in armatura dorata, con il volto segnato dalla determinazione e dal dolore.\n\nIl ricordo è così vivido che quasi ti fa male: sei in una sala maestosa, circondato da altri Guardiani delle Anime. 'Devo farlo,' dici a te stesso nel ricordo, 'anche se significa condannare tutti noi a questo ciclo infinito.'\n\nIl frammento si riscalda tra le tue mani, e senti una connessione profonda con quell'uomo dell'armatura dorata. È te stesso, in un altro tempo, in un'altra vita.",
+                title: "Il Frammento di Specchio - Il Volto di Lyra",
+                text: "Il frammento di specchio è più di quello che sembra. Quando lo sollevi, la sua superficie non riflette la tua immagine attuale, ma qualcosa di molto più antico. Per un momento, vedi una donna dai capelli scuri e gli occhi verdi - Lyra Stormweaver, la tua amata.\n\nIl ricordo è così vivido che quasi ti fa male: sei in una sala maestosa, circondato da altri Guardiani delle Anime. Lyra ti guarda con amore e paura, sapendo che stai per fare qualcosa di terribile. 'Devo farlo,' dici a te stesso nel ricordo, 'anche se significa condannare tutti noi a questo ciclo infinito.'\n\nIl frammento si riscalda tra le tue mani, e senti una connessione profonda con quella donna. Era la tua amata, sacrificata per il potere necessario a creare la maledizione. Il dolore del ricordo è quasi insopportabile.",
                 choices: [
                     {
                         text: "Concentrati sul ricordo, accetta la verità",
@@ -3877,8 +4631,9 @@
                                 if (typeof karmaSystem !== 'undefined') {
                                     karmaSystem.addKarma(20); // Accettazione della verità
                                 }
-                                playerHealth += 10; // Pace interiore
+                                playerHealth -= 15; // Dolore emotivo per Lyra
                                 updateUI();
+                                showMemoryNotification('frammento');
                             });
                         }
                     },
@@ -3910,6 +4665,117 @@
                     }
                 ]
             },
+            torreMemoria: {
+                title: "La Torre della Memoria",
+                text: "La Torre della Memoria si erge davanti a te come un monumento al passato. Le sue pareti sono ricoperte di rune che pulsano con una luce dorata, e l'aria è satura di magia antica. Questo è il luogo dove i Guardiani delle Anime conservavano i loro ricordi più preziosi.\n\nMentre sali le scale di pietra, ogni passo ti riporta un frammento di memoria più vivido del precedente. Vedi immagini di Theron, tuo padre, che ti insegna le rune. Vedi Lyra, la tua amata, che ti sorride con amore. Vedi il Consiglio dei Guardiani, dove hai preso la decisione più difficile della tua vita.\n\nIn cima alla torre, trovi una stanza circolare con un grande specchio al centro. È qui che potrai vedere la verità completa, se hai il coraggio di guardare.",
+                onEnter: function() {
+                    // Trigger achievement per aver raggiunto la Torre
+                    if (typeof achievementSystem !== 'undefined') {
+                        achievementSystem.unlockAchievement('memory_keeper');
+                    }
+                },
+                choices: [
+                    {
+                        text: "Guarda nello specchio, affronta la verità completa",
+                        nextScene: "veritaCompleta",
+                        onSelect: function() {
+                            executeActionOnce('face_complete_truth', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(30); // Coraggio di affrontare la verità
+                                }
+                                playerHealth -= 20; // Stress emotivo intenso
+                                updateUI();
+                                showMemoryNotification('verità');
+                            });
+                        }
+                    },
+                    {
+                        text: "Studia le rune della torre per comprendere meglio",
+                        nextScene: "studiareRuneTorre",
+                        onSelect: function() {
+                            executeActionOnce('study_tower_runes', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(15); // Approccio metodico
+                                }
+                                playerHealth -= 10; // Sforzo mentale
+                                updateUI();
+                            });
+                        }
+                    },
+                    {
+                        text: "Torna indietro, non sei pronto per la verità",
+                        nextScene: "cellaIniziale",
+                        onSelect: function() {
+                            executeActionOnce('avoid_truth', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(-10); // Paura della verità
+                                }
+                                playerHealth -= 5; // Stress emotivo
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            veritaCompleta: {
+                title: "La Verità Completa - Il Sacrificio di Aric",
+                text: "Lo specchio della Torre della Memoria ti mostra la verità completa, e il peso di quello che vedi ti schiaccia. Vedi te stesso, Aric Valenheart, in una sala maestosa circondato dal Consiglio dei Guardiani delle Anime.\n\nLa scena è vivida e dolorosa: stai per creare la maledizione che proteggerà Eldoria da L'Abisso, ma il prezzo è terribile. Vedi Lyra, la tua amata, che ti guarda con amore e paura. Vedi Theron, tuo padre, che ti sorride con orgoglio e tristezza. Vedi i tuoi compagni Guardiani che si preparano al sacrificio.\n\n'Devo farlo,' dici nel ricordo, 'anche se significa condannare tutti noi a questo ciclo infinito. È l'unico modo per salvare Eldoria da L'Abisso.'\n\nIl rituale inizia, e vedi le anime dei tuoi compagni, inclusa Lyra, che si dissolvono per fornire il potere necessario. Il dolore è insopportabile, ma la determinazione nel tuo volto è assoluta. Hai salvato Eldoria, ma hai condannato te stesso e i tuoi cari a un'esistenza di dolore.",
+                onEnter: function() {
+                    // Trigger achievement per aver visto la verità completa
+                    if (typeof achievementSystem !== 'undefined') {
+                        achievementSystem.unlockAchievement('guardian');
+                    }
+                    // Aggiungi l'Amuleto di Lyra all'inventario
+                    if (!inventory.includes("Amuleto di Lyra")) {
+                        inventory.push("Amuleto di Lyra");
+                        showItemNotification("Amuleto di Lyra", true);
+                        updateUI();
+                    }
+                },
+                choices: [
+                    {
+                        text: "Accetta la responsabilità, è tempo di espiare",
+                        nextScene: "accettareResponsabilita",
+                        onSelect: function() {
+                            executeActionOnce('accept_responsibility', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(50); // Accettazione completa
+                                }
+                                playerHealth += 25; // Pace interiore
+                                souls += 100; // Comprensione del valore delle anime
+                                updateUI();
+                                showMemoryNotification('ricordi');
+                            });
+                        }
+                    },
+                    {
+                        text: "Rifiuta il passato, non puoi essere quel mostro",
+                        nextScene: "rifiutarePassato",
+                        onSelect: function() {
+                            executeActionOnce('reject_past', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(-30); // Rifiuto della responsabilità
+                                }
+                                playerHealth -= 30; // Stress emotivo intenso
+                                updateUI();
+                            });
+                        }
+                    },
+                    {
+                        text: "Comprendi la necessità, ma cerca una via d'uscita",
+                        nextScene: "cercareViaUscita",
+                        onSelect: function() {
+                            executeActionOnce('seek_alternative', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(20); // Approccio equilibrato
+                                }
+                                playerHealth -= 10; // Stress moderato
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
             studiareRune: {
                 title: "Le Rune Antiche",
                 text: "Le rune sulle pareti non sono semplici decorazioni: sono una storia, la TUA storia. Mentre le studi, i simboli iniziano a brillare con una luce dorata, e le parole si formano nella tua mente come se fossero sempre state lì.\n\n'Guardiano delle Anime, Custode della Maledizione, Protettore di Eldoria.' Questi sono i tuoi titoli, i tuoi ruoli. Ma c'è di più: le rune raccontano di una decisione presa secoli fa, di un sacrificio fatto per salvare il mondo da qualcosa di molto più terribile.\n\nOgni runa che leggi ti riporta un frammento di memoria, e con ogni frammento, il peso della responsabilità diventa più pesante.",
@@ -3924,6 +4790,10 @@
                                 }
                                 playerHealth -= 10; // Sforzo mentale intenso
                                 updateUI();
+                                // Sblocca la Torre della Memoria
+                                if (typeof consequenceSystem !== 'undefined') {
+                                    consequenceSystem.unlockedScenes.add('torreMemoria');
+                                }
                             });
                         }
                     },
@@ -4488,7 +5358,19 @@
             setTimeout(() => {
                 currentScene = sceneName;
                 document.getElementById('title').textContent = scene.title;
-                document.getElementById('text').textContent = scene.text;
+                
+                // INTEGRAZIONE SISTEMI EVOLUTIVI - PRIORITÀ CRITICA
+                // Controlla se la scena ha una descrizione evoluta
+                let sceneText = scene.text;
+                if (typeof evolvingScenes !== 'undefined') {
+                    const evolvedDescription = evolvingScenes.getEvolvedDescription(sceneName);
+                    if (evolvedDescription) {
+                        sceneText = evolvedDescription;
+                        console.log(`Descrizione evoluta caricata per: ${sceneName}`);
+                    }
+                }
+                
+                document.getElementById('text').textContent = sceneText;
 
                 if (scene.onEnter) {
                     scene.onEnter();
@@ -4526,6 +5408,23 @@
                         button.appendChild(ripple);
                         
                         setTimeout(() => {
+                            // INTEGRAZIONE SISTEMA MEMORIA SCELTE - PRIORITÀ CRITICA
+                            // Registra la scelta nel sistema di memoria
+                            if (typeof choiceMemory !== 'undefined') {
+                                const choiceId = choice.text.toLowerCase().replace(/\s+/g, '_');
+                                const karmaEffect = choice.karmaEffect || 0;
+                                choiceMemory.recordChoice(sceneName, choiceId, karmaEffect, {
+                                    choiceText: choice.text,
+                                    nextScene: choice.nextScene
+                                });
+                            }
+                            
+                            // Controlla trigger di evoluzione per la scena
+                            if (typeof evolvingScenes !== 'undefined') {
+                                const choiceId = choice.text.toLowerCase().replace(/\s+/g, '_');
+                                evolvingScenes.checkEvolutionTriggers(sceneName, choiceId);
+                            }
+                            
                             // Esegui onSelect se presente
                             if (choice.onSelect) {
                                 choice.onSelect();
@@ -4568,6 +5467,17 @@
             
             document.getElementById('health-display').textContent = `${playerHealth}/${maxHealth}`;
             document.getElementById('souls-display').textContent = souls;
+            
+            // Aggiorna visualizzazione karma
+            updateKarmaDisplay();
+            
+            // Aggiorna visualizzazione difficoltà
+            const difficultyDisplay = document.getElementById('difficulty-display');
+            if (difficultyDisplay) {
+                difficultyDisplay.textContent = difficultyLevel;
+                difficultyDisplay.style.color = gameDifficulty >= 1.5 ? 'var(--ds-blood)' : 'var(--ds-gold)';
+            }
+            
             // Mappatura nomi fuochi sacri
             const fuochiSacroNomi = {
                 "fuocoSacroPrigione": "Fuoco Sacro: Prigione",
@@ -4586,7 +5496,24 @@
             } else {
                 inventory.forEach((item, index) => {
                     const li = document.createElement('li');
-                    li.textContent = item;
+                    const itemInfo = itemDescriptions[item] || {
+                        type: "Sconosciuto",
+                        effect: "Effetto sconosciuto",
+                        rarity: "Comune",
+                        value: 0
+                    };
+                    
+                    // Crea elemento con informazioni dettagliate
+                    li.innerHTML = `
+                        <div class="item-header">
+                            <span class="item-name">${item}</span>
+                            <span class="item-type">[${itemInfo.type}]</span>
+                        </div>
+                        <div class="item-details">
+                            <span class="item-effect">${itemInfo.effect}</span>
+                            <span class="item-rarity rarity-${itemInfo.rarity.toLowerCase()}">${itemInfo.rarity}</span>
+                        </div>
+                    `;
                     
                     // Aggiungi classe per oggetti importanti
                     if (item.includes("Amuleto") || item.includes("Corona") || item.includes("Gemma")) {
@@ -4598,6 +5525,9 @@
                         li.classList.add('new-item');
                         setTimeout(() => li.classList.remove('new-item'), 1000);
                     }
+                    
+                    // Aggiungi tooltip con informazioni complete
+                    li.title = `${item}\nTipo: ${itemInfo.type}\nEffetto: ${itemInfo.effect}\nRarità: ${itemInfo.rarity}\nValore: ${itemInfo.value} anime`;
                     
                     inventoryList.appendChild(li);
                 });
@@ -4969,29 +5899,104 @@
         }
 
         function showCraftingMenu() {
-            let menu = "=== MENU CRAFTING ===\n\n";
-            let availableRecipes = 0;
-            
-            for (let recipeName in craftingRecipes) {
-                const recipe = craftingRecipes[recipeName];
-                const canCraftThis = canCraft(recipeName);
-                
-                menu += `${recipeName}:\n`;
-                menu += `  Ingredienti: ${recipe.ingredients.join(", ")}\n`;
-                menu += `  Costo Anime: ${recipe.soulsCost}\n`;
-                menu += `  Effetto: ${recipe.description}\n`;
-                menu += `  Stato: ${canCraftThis ? "✅ Disponibile" : "❌ Non disponibile"}\n\n`;
-                
-                if (canCraftThis) availableRecipes++;
+            // Controllo di sicurezza per le variabili
+            if (typeof craftingRecipes === 'undefined') {
+                showNotification("Errore: Sistema crafting non disponibile", "damage", 3000);
+                return;
             }
             
-            if (availableRecipes === 0) {
-                menu += "Non hai ingredienti sufficienti per nessuna ricetta.";
+            if (typeof inventory === 'undefined') {
+                inventory = [];
             }
             
-            showNotification("Menu Crafting disponibile", "info", 2000);
-            // Il menu viene mostrato tramite l'interfaccia del gioco
+            if (typeof souls === 'undefined') {
+                souls = 0;
+            }
+            
+            // Rimuovi menu esistenti
+            const existingMenu = document.querySelector('.crafting-menu-overlay');
+            if (existingMenu) {
+                existingMenu.remove();
+            }
+            
+            const menuContainer = document.createElement('div');
+            menuContainer.className = 'crafting-menu-overlay';
+            menuContainer.style.opacity = '0';
+            menuContainer.style.transition = 'opacity 0.3s ease';
+            
+            menuContainer.innerHTML = `
+                <div class="crafting-menu">
+                    <div class="crafting-header">
+                        <h2>⚗️ Laboratorio Alchemico</h2>
+                        <button class="close-button" onclick="closeCraftingMenu()">✕</button>
+                    </div>
+                    <div class="crafting-content">
+                        <div class="crafting-recipes">
+                            ${Object.keys(craftingRecipes).map(recipeName => {
+                                const recipe = craftingRecipes[recipeName];
+                                const canCraftRecipe = canCraft(recipeName);
+                                const missingIngredients = recipe.ingredients.filter(ing => !inventory.includes(ing));
+                                const missingSouls = recipe.soulsCost - souls;
+                                
+                                return `
+                                    <div class="recipe-item ${canCraftRecipe ? 'available' : 'unavailable'}">
+                                        <div class="recipe-header">
+                                            <h3>${recipeName}</h3>
+                                            <span class="recipe-cost">💀 ${recipe.soulsCost} anime</span>
+                                        </div>
+                                        <div class="recipe-ingredients">
+                                            <strong>Ingredienti:</strong>
+                                            ${recipe.ingredients.map(ing => {
+                                                const hasIngredient = inventory.includes(ing);
+                                                return `<span class="ingredient ${hasIngredient ? 'available' : 'missing'}">${ing}</span>`;
+                                            }).join(' + ')}
+                                        </div>
+                                        <div class="recipe-effect">
+                                            <strong>Effetto:</strong> ${recipe.description}
+                                        </div>
+                                        ${canCraftRecipe ? 
+                                            `<button class="craft-button" onclick="craftItem('${recipeName}')">Crea</button>` : 
+                                            `<div class="crafting-requirements">
+                                                ${missingIngredients.length > 0 ? `Mancano: ${missingIngredients.join(', ')}` : ''}
+                                                ${missingSouls > 0 ? `Anime insufficienti: -${missingSouls}` : ''}
+                                            </div>`
+                                        }
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                        <div class="crafting-stats">
+                            <h3>📊 Statistiche Crafting</h3>
+                            <p>Anime disponibili: <span class="souls-available">${souls}</span></p>
+                            <p>Ingredienti unici: <span class="unique-ingredients">${new Set(inventory).size}</span></p>
+                            <p>Ricette disponibili: <span class="available-recipes">${Object.keys(craftingRecipes).filter(r => canCraft(r)).length}</span></p>
+                            <p>Inventario: <span class="inventory-count">${inventory.length} oggetti</span></p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(menuContainer);
+            
+            // Animazione di entrata
+            setTimeout(() => {
+                menuContainer.style.opacity = '1';
+            }, 10);
         }
+
+        function closeCraftingMenu() {
+            const menu = document.querySelector('.crafting-menu-overlay');
+            if (menu) {
+                menu.style.opacity = '0';
+                setTimeout(() => {
+                    if (menu.parentNode) {
+                        menu.parentNode.removeChild(menu);
+                    }
+                }, 300);
+            }
+        }
+
+
 
         // Funzioni per il sistema Achievement
         function checkAchievements() {
@@ -5050,47 +6055,84 @@
         }
 
         function showAchievements() {
-            let achievementText = "🏆 ACHIEVEMENT SBLOCATI:\n\n";
+            // Crea una schermata dedicata per gli achievement
+            const achievementScreen = document.createElement('div');
+            achievementScreen.id = 'achievement-screen';
+            achievementScreen.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%);
+                z-index: 10000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: 'Cinzel', serif;
+            `;
+
+            let achievementText = "<h2 style='color: var(--ds-gold); text-align: center; margin-bottom: 30px;'>🏆 ACHIEVEMENT SBLOCATI</h2>";
             let count = 0;
             
-            if (achievements.firstDeath) {
-                achievementText += "✅ Sopravvissuto - Prima morte e rinascita\n";
-                count++;
-            }
-            if (achievements.golemSlayer) {
-                achievementText += "✅ Cacciatore di Golem - Sconfiggere il Golem\n";
-                count++;
-            }
-            if (achievements.treasureHunter) {
-                achievementText += "✅ Cacciatore di Tesori - Trovare 5 oggetti\n";
-                count++;
-            }
-            if (achievements.memoryRecovery) {
-                achievementText += "✅ Ricordi Recuperati - Completare sequenza ricordi\n";
-                count++;
-            }
-            if (achievements.curseBreaker) {
-                achievementText += "✅ Spezzamaledizioni - Completare il gioco\n";
-                count++;
-            }
-            if (achievements.alchemistHelper) {
-                achievementText += "✅ Aiutante dell'Alchimista - Ottenere pozione dall'alchimista\n";
-                count++;
-            }
-            if (achievements.libraryScholar) {
-                achievementText += "✅ Studioso della Biblioteca - Trovare la mappa del tempio\n";
-                count++;
-            }
-            if (achievements.secretExplorer) {
-                achievementText += "✅ Esploratore Segreto - Scoprire passaggio segreto\n";
-                count++;
-            }
+            // Achievement del sistema migliorato
+            const allAchievements = {
+                'soul_liberator': { title: 'Liberatore di Anime', description: 'Hai liberato 100 anime perdute', unlocked: souls >= 100 },
+                'rune_scholar': { title: 'Studioso delle Rune', description: 'Hai decifrato 5 rune antiche', unlocked: inventory.includes('Pergamena di Rune') },
+                'golem_friend': { title: 'Amico del Golem', description: 'Hai fatto pace con il Golem di Pietra Antica', unlocked: false },
+                'memory_keeper': { title: 'Custode della Memoria', description: 'Hai recuperato tutti i frammenti di memoria', unlocked: inventory.includes('Frammento di Memoria') },
+                'curse_breaker': { title: 'Spezzatore di Maledizioni', description: 'Hai rotto il ciclo della maledizione', unlocked: achievements.curseBreaker },
+                'dark_ascension': { title: 'Ascensione delle Tenebre', description: 'Hai abbracciato il potere oscuro', unlocked: achievements.darkEnding },
+                'survival_sage': { title: 'Saggio della Sopravvivenza', description: 'Hai trovato l\'equilibrio tra luce e ombra', unlocked: achievements.neutralEnding },
+                'explorer': { title: 'Esploratore Infaticabile', description: 'Hai visitato tutti i luoghi principali', unlocked: achievements.explorer },
+                'craftsman': { title: 'Artigiano Abile', description: 'Hai completato 5 crafting', unlocked: false },
+                'guardian': { title: 'Guardiano Riconosciuto', description: 'Hai accettato il tuo ruolo di Guardiano delle Anime', unlocked: false }
+            };
+
+            // Achievement legacy
+            const legacyAchievements = {
+                'firstDeath': { title: 'Prima Morte', description: 'Morire per la prima volta', unlocked: achievements.firstDeath },
+                'golemSlayer': { title: 'Cacciatore di Golem', description: 'Sconfiggere il Golem', unlocked: achievements.golemSlayer },
+                'treasureHunter': { title: 'Cacciatore di Tesori', description: 'Trovare 5 oggetti', unlocked: achievements.treasureHunter },
+                'memoryRecovery': { title: 'Ricordi Recuperati', description: 'Completare sequenza ricordi', unlocked: achievements.memoryRecovery },
+                'alchemistHelper': { title: 'Aiutante dell\'Alchimista', description: 'Ottenere pozione dall\'alchimista', unlocked: achievements.alchemistHelper },
+                'libraryScholar': { title: 'Studioso della Biblioteca', description: 'Trovare la mappa del tempio', unlocked: achievements.libraryScholar },
+                'secretExplorer': { title: 'Esploratore Segreto', description: 'Scoprire passaggio segreto', unlocked: achievements.secretExplorer }
+            };
+
+            // Combina tutti gli achievement
+            const allAchievementList = { ...allAchievements, ...legacyAchievements };
+
+            achievementText += "<div style='max-height: 400px; overflow-y: auto; padding: 20px;'>";
             
+            Object.entries(allAchievementList).forEach(([id, achievement]) => {
+                if (achievement.unlocked) {
+                    achievementText += `
+                        <div style='margin-bottom: 15px; padding: 10px; border: 2px solid var(--ds-gold); border-radius: 8px; background: rgba(212, 175, 55, 0.1);'>
+                            <div style='color: var(--ds-gold-light); font-weight: bold;'>✅ ${achievement.title}</div>
+                            <div style='color: #ccc; font-size: 0.9em;'>${achievement.description}</div>
+                        </div>
+                    `;
+                    count++;
+                }
+            });
+
             if (count === 0) {
-                achievementText += "Nessun achievement sbloccato ancora.";
+                achievementText += "<div style='text-align: center; color: #666;'>Nessun achievement sbloccato ancora.</div>";
             }
-            
-            alert(achievementText);
+
+            achievementText += "</div>";
+            achievementText += "<button onclick='closeAchievementScreen()' style='margin-top: 20px; padding: 10px 20px; background: var(--ds-gold); color: black; border: none; border-radius: 5px; cursor: pointer;'>CHIUDI</button>";
+
+            achievementScreen.innerHTML = achievementText;
+            document.body.appendChild(achievementScreen);
+        }
+
+        function closeAchievementScreen() {
+            const achievementScreen = document.getElementById('achievement-screen');
+            if (achievementScreen) {
+                achievementScreen.remove();
+            }
         }
 
         // Funzione per verificare lo stato delle route
@@ -5507,6 +6549,124 @@
         window.memorySystem = memorySystem;
         window.karmaSystem = karmaSystem;
         window.consequenceSystem = consequenceSystem;
+
+        // Sistema di descrizioni oggetti
+        let itemDescriptions = {
+            "Chiave Arrugginita": {
+                type: "Chiave",
+                effect: "Apre porte chiuse",
+                rarity: "Comune",
+                value: 5
+            },
+            "Mappa Rudimentale": {
+                type: "Mappa",
+                effect: "Rivela passaggi nascosti",
+                rarity: "Comune",
+                value: 10
+            },
+            "Sacca di Cuoio": {
+                type: "Contenitore",
+                effect: "Contiene 20 anime",
+                rarity: "Comune",
+                value: 20
+            },
+            "Erba Curativa": {
+                type: "Ingrediente",
+                effect: "Cura 25 HP",
+                rarity: "Comune",
+                value: 15
+            },
+            "Erba di Forza": {
+                type: "Ingrediente",
+                effect: "Aumenta forza temporaneamente",
+                rarity: "Raro",
+                value: 25
+            },
+            "Acqua Pura": {
+                type: "Ingrediente",
+                effect: "Disintossica e cura",
+                rarity: "Comune",
+                value: 10
+            },
+            "Frammento di Memoria": {
+                type: "Artefatto",
+                effect: "Rivela ricordi del passato",
+                rarity: "Raro",
+                value: 50
+            },
+            "Conoscenza del Passato": {
+                type: "Artefatto",
+                effect: "Conoscenza antica",
+                rarity: "Epico",
+                value: 100
+            },
+            "Pozione di Salute": {
+                type: "Pozione",
+                effect: "Ripristina 50 HP",
+                rarity: "Comune",
+                value: 35
+            },
+            "Pozione di Forza": {
+                type: "Pozione",
+                effect: "Aumenta forza temporaneamente",
+                rarity: "Raro",
+                value: 50
+            },
+            "Cristallo di Potenza": {
+                type: "Ingrediente",
+                effect: "Potenziamento magico",
+                rarity: "Raro",
+                value: 40
+            },
+            "Cristallo di Anima": {
+                type: "Ingrediente",
+                effect: "Energia spirituale",
+                rarity: "Epico",
+                value: 80
+            },
+            "Spada Arrugginita": {
+                type: "Arma",
+                effect: "Danno fisico aumentato",
+                rarity: "Comune",
+                value: 30
+            },
+            "Amuleto Antico": {
+                type: "Artefatto",
+                effect: "Protezione arcana",
+                rarity: "Leggendario",
+                value: 200
+            },
+            "Pergamena di Rune": {
+                type: "Artefatto",
+                effect: "Conoscenza delle rune",
+                rarity: "Epico",
+                value: 150
+            },
+            "Gemma Preziosa": {
+                type: "Artefatto",
+                effect: "Potere magico puro",
+                rarity: "Leggendario",
+                value: 300
+            },
+            "Corona dell'Anima": {
+                type: "Artefatto",
+                effect: "Controllo dell'anima",
+                rarity: "Mito",
+                value: 500
+            },
+            "Mappa del Tempio": {
+                type: "Mappa",
+                effect: "Rivela segreti del tempio",
+                rarity: "Raro",
+                value: 60
+            },
+            "Amuleto delle Rovine": {
+                type: "Artefatto",
+                effect: "Protezione dalle rovine",
+                rarity: "Epico",
+                value: 120
+            }
+        };
     </script>
 </body>
 </html>
