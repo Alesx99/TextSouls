@@ -1322,7 +1322,7 @@
         /* Sistema di Notifiche In-Game */
         .game-notification {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
             background: linear-gradient(145deg, rgba(43, 43, 43, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%);
             border: 2px solid var(--ds-gold);
@@ -1558,6 +1558,8 @@
         // Sistema di Notifiche In-Game
         let notificationQueue = [];
         let isShowingNotification = false;
+        let achievementQueue = [];
+        let isShowingAchievement = false;
 
         function showNotification(message, type = 'info', duration = 3000) {
             notificationQueue.push({ message, type, duration });
@@ -1605,8 +1607,50 @@
 
         // Funzioni specifiche per tipo di notifica
         function showAchievementNotification(achievementName) {
+            // Usa il sistema di notifiche in-game per achievement semplici
             const message = `🏆 ACHIEVEMENT: ${achievementName}`;
             showNotification(message, 'achievement', 4000);
+        }
+
+        // Funzione per achievement complessi con descrizione
+        function showDetailedAchievement(title, description) {
+            achievementQueue.push({ title, description });
+            if (!isShowingAchievement) {
+                processAchievementQueue();
+            }
+        }
+
+        function processAchievementQueue() {
+            if (achievementQueue.length === 0) {
+                isShowingAchievement = false;
+                return;
+            }
+            
+            isShowingAchievement = true;
+            const achievement = achievementQueue.shift();
+            displayDetailedAchievement(achievement.title, achievement.description);
+        }
+
+        function displayDetailedAchievement(title, description) {
+            const notification = document.createElement('div');
+            notification.className = 'achievement-notification';
+            notification.innerHTML = `
+                <div style="font-weight: bold; margin-bottom: 5px;">🏆 ${title}</div>
+                <div style="font-size: 0.9em;">${description}</div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Rimuovi la notifica dopo 3 secondi
+            setTimeout(() => {
+                notification.style.animation = 'achievementSlide 0.5s ease-in reverse';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                    processAchievementQueue();
+                }, 500);
+            }, 3000);
         }
 
         // Funzione di validazione per i danni
@@ -3870,24 +3914,8 @@
         }
 
         function showAchievementNotification(title, description) {
-            const notification = document.createElement('div');
-            notification.className = 'achievement-notification';
-            notification.innerHTML = `
-                <div style="font-weight: bold; margin-bottom: 5px;">🏆 ${title}</div>
-                <div style="font-size: 0.9em;">${description}</div>
-            `;
-            
-            document.body.appendChild(notification);
-            
-            // Rimuovi la notifica dopo 3 secondi
-            setTimeout(() => {
-                notification.style.animation = 'achievementSlide 0.5s ease-in reverse';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 500);
-            }, 3000);
+            // Usa la nuova funzione per achievement dettagliati
+            showDetailedAchievement(title, description);
         }
 
         function showAchievements() {
