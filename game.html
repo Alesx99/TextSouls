@@ -1609,8 +1609,17 @@
             showNotification(message, 'achievement', 4000);
         }
 
+        // Funzione di validazione per i danni
+        function validateDamage(damage, defaultDamage = 10) {
+            if (typeof damage === 'undefined' || isNaN(damage) || damage < 0) {
+                return defaultDamage;
+            }
+            return damage;
+        }
+
         function showDamageNotification(damage, enemyType = '') {
-            const message = `⚔️ Hai subito ${damage} danni${enemyType ? ` da ${enemyType}` : ''}`;
+            const safeDamage = validateDamage(damage, 10);
+            const message = `⚔️ Hai subito ${safeDamage} danni${enemyType ? ` da ${enemyType}` : ''}`;
             showNotification(message, 'damage', 2500);
         }
 
@@ -2023,7 +2032,7 @@
                 text: "Con audacia, allunghi la mano e tocchi la runa brillante sul petto del Golem. Una scarica di energia ti attraversa, ma il Golem barcolla e la sua aura si affievolisce. Sembra un punto vitale!",
                 onEnter: () => {
                     if (!foughtGolem) {
-                        alert("Il Golem è stato significativamente indebolito!");
+                        showAchievementNotification("Golem Indebolito");
                     }
                 },
                 choices: [
@@ -2389,7 +2398,7 @@
                     if (Math.random() < 0.4) {
                         const damage = Math.floor(Math.random() * 11) + 10; // Danno 10-20 HP
                         playerHealth -= damage;
-                        alert(`Una trappola antica si attiva! Hai perso ${damage} HP!`);
+                        showDamageNotification(damage, "trappola antica");
                         updateUI();
                         if (playerHealth <= 0) {
                             loadScene("deathScreen");
@@ -2413,7 +2422,8 @@
                         playerHealth -= damage;
                         // Effetti negativi permanenti
                         maxHealth = Math.max(70, maxHealth - 10);
-                        alert(`Una maledizione antica ti avvolge! Hai perso ${damage} HP e la tua salute massima è ridotta permanentemente!`);
+                        showDamageNotification(damage, "maledizione antica");
+                        showNotification("Salute massima ridotta!", "damage", 3000);
                         updateUI();
                         if (playerHealth <= 0) {
                             loadScene("deathScreen");
@@ -2586,7 +2596,8 @@
                     souls += 40;
                     updateUI();
                     saveGame();
-                    alert("Hai sconfitto la mummia e ottenuto 40 anime!");
+                    showSoulsNotification(40);
+                    showAchievementNotification("Mummia Sconfitta");
                 },
                 choices: [
                     { text: "Esplora il sarcofago", nextScene: "criptaAntica" },
@@ -2609,19 +2620,20 @@
                     if (!inventory.includes("Spada Arrugginita")) {
                         inventory.push("Spada Arrugginita");
                         updateUI();
-                        alert("Hai trovato 10 anime e una Spada Arrugginita!");
+                        showItemNotification("Spada Arrugginita", true);
+                        showSoulsNotification(10);
                     } else {
-                        alert("Hai trovato 10 anime.");
+                        showSoulsNotification(10);
                     }
                     
                     // Possibilità di trovare ingredienti di crafting
                     const randomChance = Math.random();
                     if (randomChance < 0.4 && !inventory.includes("Cristallo di Potenza")) {
                         inventory.push("Cristallo di Potenza");
-                        alert("Hai trovato un Cristallo di Potenza nelle rovine!");
+                        showItemNotification("Cristallo di Potenza", true);
                     } else if (randomChance < 0.6 && !inventory.includes("Cristallo di Anima")) {
                         inventory.push("Cristallo di Anima");
-                        alert("Hai trovato un Cristallo di Anima nelle rovine!");
+                        showItemNotification("Cristallo di Anima", true);
                     }
                     
                     updateUI();
@@ -2636,12 +2648,13 @@
                 text: "Esamini la spada arrugginita più da vicino. Nonostante l'aspetto trasandato, riconosci i segni di un'antica forgiatura. Potrebbe essere riparata da un fabbro esperto. Inoltre, trovi un passaggio nascosto dietro una colonna crollata.",
                 onEnter: () => {
                     if (!inventory.includes("Spada Arrugginita")) {
-                        alert("Non hai la spada da esaminare.");
+                        showNotification("Non hai la spada da esaminare.", "damage", 3000);
                         return;
                     }
                     souls += 15;
                     updateUI();
-                    alert("Hai trovato un passaggio segreto e ottenuto 15 anime!");
+                    showSoulsNotification(15);
+                    showAchievementNotification("Passaggio Segreto");
                 },
                 choices: [
                     { text: "Esplora il passaggio segreto", nextScene: "passaggioSegreto" },
@@ -2653,7 +2666,7 @@
                 text: "Mentre cerchi un luogo per riposare, trovi un antico Fuoco Sacro, le cui fiamme danzano pigramente. Tuttavia, noti che le fiamme sembrano più deboli del solito e richiedono un'offerta per essere attivate.",
                 onEnter: () => {
                     // Il fuoco sacro della città è stato rimosso per aumentare la sfida
-                    alert("Questo Fuoco Sacro è stato spento. Devi trovare un altro punto di riposo.");
+                    showNotification("Questo Fuoco Sacro è stato spento. Devi trovare un altro punto di riposo.", "info", 3000);
                 },
                 choices: [
                     { text: "Continua a esplorare", nextScene: "ingressoCitta" },
@@ -2674,7 +2687,8 @@
                     
                     souls += 50;
                     updateUI();
-                    alert("Hai raggiunto il Santuario della Maledizione! +50 anime.");
+                    showSoulsNotification(50);
+                    showAchievementNotification("Santuario della Maledizione");
                 },
                 choices: [
                     { text: "Spezza la maledizione", nextScene: "finaleBuono", condition: () => playerChoices.hasCollectedAllArtifacts },
@@ -2691,7 +2705,8 @@
                         inventory.push("Amuleto delle Rovine");
                         souls += 30;
                         updateUI();
-                        alert("Hai trovato un Amuleto delle Rovine e ottenuto 30 anime!");
+                        showItemNotification("Amuleto delle Rovine", true);
+                        showSoulsNotification(30);
                     }
                 },
                 choices: [
@@ -2770,7 +2785,8 @@
                     hasPartialMemory = true;
                     souls += 25;
                     updateUI();
-                    alert("Hai recuperato ricordi parziali! +25 anime.");
+                    showSoulsNotification(25);
+                    showAchievementNotification("Ricordi Parziali");
                 },
                 choices: [
                     { text: "Continua a meditare", nextScene: "sogniRicordi" },
@@ -2783,7 +2799,8 @@
                 onEnter: () => {
                     souls += 30;
                     updateUI();
-                    alert("I sogni ti hanno rivelato la verità! +30 anime.");
+                    showSoulsNotification(30);
+                    showAchievementNotification("Verità nei Sogni");
                 },
                 choices: [
                     { text: "Cerca l'alchimista", nextScene: "laboratorioAlchimista" },
@@ -2903,7 +2920,8 @@
                     } else {
                         souls += 10;
                         updateUI();
-                        alert("Ti sei nascosto con successo! +10 anime.");
+                        showSoulsNotification(10);
+                    showAchievementNotification("Nascondiglio Sicuro");
                     }
                 },
                 choices: [
@@ -2917,7 +2935,8 @@
                 onEnter: () => {
                     souls += 20;
                     updateUI();
-                    alert("Hai trovato corridoi nascosti! +20 anime.");
+                    showSoulsNotification(20);
+                    showAchievementNotification("Corridoi Nascosti");
                 },
                 choices: [
                     { text: "Esplora più a fondo", nextScene: "cameraSegreta" },
@@ -2934,11 +2953,12 @@
                         inventory.push("Pozione di Forza");
                         souls += 25;
                         updateUI();
-                        alert("Hai trovato un libro di incantesimi e una Pozione di Forza! +25 anime.");
+                        showItemNotification("Pozione di Forza", true);
+                        showSoulsNotification(25);
                     } else {
                         souls += 25;
                         updateUI();
-                        alert("Hai trovato un libro di incantesimi! +25 anime.");
+                        showSoulsNotification(25);
                     }
                 },
                 choices: [
@@ -2952,7 +2972,8 @@
                 onEnter: () => {
                     souls += 30;
                     updateUI();
-                    alert("Hai trovato il laboratorio dell'alchimista! +30 anime.");
+                    showSoulsNotification(30);
+                    showAchievementNotification("Laboratorio Alchemico");
                 },
                 choices: [
                     { text: "Parla con l'alchimista", nextScene: "dialogoAlchimista" },
@@ -2967,7 +2988,8 @@
                 onEnter: () => {
                     souls += 20;
                     updateUI();
-                    alert("L'alchimista può aiutarti! +20 anime.");
+                    showSoulsNotification(20);
+                    showAchievementNotification("Alchimista Alleato");
                 },
                 choices: [
                     { text: "Accetta l'aiuto", nextScene: "ricettaCura" },
@@ -2981,7 +3003,8 @@
                 onEnter: () => {
                     souls += 15;
                     updateUI();
-                    alert("Hai ottenuto la ricetta della cura! +15 anime.");
+                    showSoulsNotification(15);
+                    showAchievementNotification("Ricetta della Cura");
                 },
                 choices: [
                     { text: "Cerca le erbe rare", nextScene: "cercaErbe" },
@@ -2994,7 +3017,8 @@
                 onEnter: () => {
                     souls += 25;
                     updateUI();
-                    alert("Hai ottenuto informazioni preziose! +25 anime.");
+                    showSoulsNotification(25);
+                    showAchievementNotification("Informazioni Preziose");
                 },
                 choices: [
                     { text: "Chiedi della ricetta", nextScene: "ricettaCura" },
@@ -3007,7 +3031,8 @@
                 onEnter: () => {
                     souls += 10;
                     updateUI();
-                    alert("Sai dove cercare le erbe! +10 anime.");
+                    showSoulsNotification(10);
+                    showAchievementNotification("Conoscenza delle Erbe");
                 },
                 choices: [
                     { text: "Vai alle Terre Selvagge", nextScene: "terreSelvagge" },
@@ -3024,11 +3049,12 @@
                         inventory.push("Pozione di Forza");
                         souls += 20;
                         updateUI();
-                        alert("Hai trovato una Pozione di Forza! +20 anime.");
+                        showItemNotification("Pozione di Forza", true);
+                        showSoulsNotification(20);
                     } else {
                         souls += 20;
                         updateUI();
-                        alert("Hai esaminato le pozioni! +20 anime.");
+                        showSoulsNotification(20);
                     }
                 },
                 choices: [
@@ -3058,7 +3084,8 @@
                 onEnter: () => {
                     souls += 35;
                     updateUI();
-                    alert("Hai trovato la biblioteca antica! +35 anime.");
+                    showSoulsNotification(35);
+                    showAchievementNotification("Biblioteca Antica");
                 },
                 choices: [
                     { text: "Cerca informazioni sulla maledizione", nextScene: "ricercaMaledizione" },
@@ -3124,7 +3151,8 @@
                 onEnter: () => {
                     souls += 40;
                     updateUI();
-                    alert("Hai trovato informazioni cruciali! +40 anime.");
+                    showSoulsNotification(40);
+                    showAchievementNotification("Informazioni Cruciali");
                 },
                 choices: [
                     { text: "Cerca il rituale inverso", nextScene: "ritualeInverso" },
@@ -3137,7 +3165,8 @@
                 onEnter: () => {
                     souls += 50;
                     updateUI();
-                    alert("Hai scoperto il rituale inverso! +50 anime.");
+                    showSoulsNotification(50);
+                    showAchievementNotification("Rituale Inverso");
                 },
                 choices: [
                     { text: "Vai al Santuario", nextScene: "santuarioFinale" },
@@ -3152,11 +3181,12 @@
                         inventory.push("Mappa del Tempio");
                         souls += 30;
                         updateUI();
-                        alert("Hai trovato una Mappa del Tempio! +30 anime.");
+                        showItemNotification("Mappa del Tempio", true);
+                        showSoulsNotification(30);
                     } else {
                         souls += 30;
                         updateUI();
-                        alert("Hai esaminato i libri di incantesimi! +30 anime.");
+                        showSoulsNotification(30);
                     }
                 },
                 choices: [
@@ -3172,10 +3202,11 @@
                     if (!inventory.includes("Gemma Preziosa")) {
                         inventory.push("Gemma Preziosa");
                         updateUI();
-                        alert("Hai trovato una camera dei tesori! +100 anime e una Gemma Preziosa!");
+                        showItemNotification("Gemma Preziosa", true);
+                        showSoulsNotification(100);
                     } else {
                         updateUI();
-                        alert("Hai trovato una camera dei tesori! +100 anime!");
+                        showSoulsNotification(100);
                     }
                 },
                 choices: [
@@ -3191,7 +3222,8 @@
                         inventory.push("Corona dell'Anima");
                         souls += 150;
                         updateUI();
-                        alert("Hai trovato la Corona dell'Anima! +150 anime!");
+                        showItemNotification("Corona dell'Anima", true);
+                        showSoulsNotification(150);
                     }
                 },
                 choices: [
@@ -3204,7 +3236,7 @@
                 text: "Un santuario più piccolo ma comunque sacro. Le fiamme del fuoco sacro danzano dolcemente. Tuttavia, noti che le fiamme sembrano più deboli e richiedono un'offerta per essere attivate.",
                 onEnter: () => {
                     // Il santuario intermedio è stato disabilitato per aumentare la sfida
-                    alert("Questo santuario è stato disabilitato. Devi trovare un altro punto di riposo.");
+                    showNotification("Questo santuario è stato disabilitato. Devi trovare un altro punto di riposo.", "info", 3000);
                 },
                 choices: [
                     { text: "Continua il viaggio", nextScene: "terreSelvagge" },
@@ -3245,7 +3277,7 @@
             playerHealth = maxHealth;
             loadScene(lastSacredFire);
             updateUI();
-            alert("Sei rinato al tuo ultimo Fuoco Sacro!");
+            showNotification("Sei rinato al tuo ultimo Fuoco Sacro!", "achievement", 3000);
         }
 
         function startGame() {
@@ -3587,19 +3619,20 @@
                 updateUI();
                 loadScene(returnScene);
             } else {
-                alert("Non hai la Pergamena di Rune!");
+                showNotification("Non hai la Pergamena di Rune!", "damage", 3000);
             }
         }
 
         function useSack(returnScene) {
             if (inventory.includes("Sacca di Cuoio")) {
-                alert("Usi la Sacca di Cuoio per aumentare la tua capacità di trasporto! +2 slot inventario.");
+                showNotification("Usi la Sacca di Cuoio per aumentare la tua capacità di trasporto!", "achievement", 3000);
                 // Implementazione simbolica - in un gioco reale si aumenterebbe il limite inventario
                 souls += 10;
+                showSoulsNotification(10);
                 updateUI();
                 loadScene(returnScene);
             } else {
-                alert("Non hai la Sacca di Cuoio!");
+                showNotification("Non hai la Sacca di Cuoio!", "damage", 3000);
             }
         }
 
@@ -3616,36 +3649,40 @@
                 if (sideEffect < 0.4) {
                     const damage = Math.floor(Math.random() * 15) + 10;
                     playerHealth -= damage;
-                    alert("Hai usato una Pozione di Forza! +30 HP. Salute: " + playerHealth + " (Effetto collaterale: -" + damage + " HP)");
+                    showHealNotification(30);
+                    showDamageNotification(damage, "effetto collaterale");
+                    showNotification(`Salute attuale: ${playerHealth}`, "info", 2000);
                 } else {
-                    alert("Hai usato una Pozione di Forza! +30 HP. Salute: " + playerHealth);
+                    showHealNotification(30);
+                    showNotification(`Salute attuale: ${playerHealth}`, "info", 2000);
                 }
                 updateUI();
                 loadScene(returnScene);
             } else {
-                alert("Non hai una Pozione di Forza!");
+                showNotification("Non hai una Pozione di Forza!", "damage", 3000);
             }
         }
 
         function useGem(returnScene) {
             if (inventory.includes("Gemma Preziosa")) {
                 souls += 50;
-                alert("Hai usato la Gemma Preziosa! +50 anime.");
+                showSoulsNotification(50);
                 updateUI();
                 loadScene(returnScene);
             } else {
-                alert("Non hai una Gemma Preziosa!");
+                showNotification("Non hai una Gemma Preziosa!", "damage", 3000);
             }
         }
 
         function useCrown(returnScene) {
             if (inventory.includes("Corona dell'Anima")) {
-                alert("La Corona dell'Anima ti conferisce un potere immenso! +50 HP temporaneo.");
+                showHealNotification(50);
+                showNotification("Potere della Corona attivato!", "achievement", 3000);
                 playerHealth = Math.min(maxHealth, playerHealth + 50);
                 updateUI();
                 loadScene(returnScene);
             } else {
-                alert("Non hai la Corona dell'Anima!");
+                showNotification("Non hai la Corona dell'Anima!", "damage", 3000);
             }
         }
 
@@ -3695,12 +3732,12 @@
         function craftItem(recipeName) {
             const recipe = craftingRecipes[recipeName];
             if (!recipe) {
-                alert("Ricetta non trovata!");
+                showNotification("Ricetta non trovata!", "damage", 3000);
                 return false;
             }
             
             if (!canCraft(recipeName)) {
-                alert("Non hai gli ingredienti necessari o abbastanza anime!");
+                showNotification("Non hai gli ingredienti necessari o abbastanza anime!", "damage", 3000);
                 return false;
             }
             
@@ -3777,7 +3814,8 @@
                 menu += "Non hai ingredienti sufficienti per nessuna ricetta.";
             }
             
-            alert(menu);
+            showNotification("Menu Crafting disponibile", "info", 2000);
+            // Il menu viene mostrato tramite l'interfaccia del gioco
         }
 
         // Funzioni per il sistema Achievement
@@ -3907,7 +3945,7 @@
                 achievementText += "Nessun achievement sbloccato ancora.";
             }
             
-            alert(achievementText);
+            showAchievementNotification(achievementName);
         }
 
         function showVictoryScreen(endingType = "DEFAULT") {
