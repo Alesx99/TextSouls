@@ -935,19 +935,34 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                linear-gradient(135deg, #000000 0%, #2d1b3d 25%, #4B0082 50%, #2d1b3d 75%, #000000 100%),
-                radial-gradient(circle at 20% 80%, rgba(212, 175, 55, 0.4) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 215, 0, 0.3) 0%, transparent 50%);
-            color: #e0e0e0;
-            font-size: 2em;
-            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.85);
+            z-index: 1002;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            z-index: 1002; /* Sopra tutto il resto */
+            overflow: auto;
+        }
+        .victory-canvas {
+            background: linear-gradient(135deg, #181818 0%, #23213a 100%);
+            border: 4px solid var(--ds-gold);
+            border-radius: 18px;
+            box-shadow: 0 0 40px var(--ds-gold-glow), 0 0 0 8px rgba(0,0,0,0.5);
+            max-width: 900px;
+            width: 95vw;
+            max-height: 90vh;
+            min-width: 320px;
+            min-height: 320px;
+            padding: 40px 30px 30px 30px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: auto;
+        }
+        #victory-screen h1, #victory-screen p, #victory-stats, #victory-screen button {
+            position: relative;
+            z-index: 1;
         }
 
         #victory-screen h1 {
@@ -1371,6 +1386,29 @@
             border-color: var(--ds-gold);
             box-shadow: 0 0 25px var(--ds-gold-glow);
         }
+
+        @media (max-width: 480px) {
+            .victory-canvas {
+                padding: 12px 5px 18px 5px;
+                min-width: unset;
+                min-height: 180px;
+                max-width: 99vw;
+                max-height: 95vh;
+            }
+            #victory-screen h1 {
+                font-size: 1.2em;
+                padding: 0 2px;
+            }
+            #victory-screen p, #victory-stats {
+                font-size: 0.95em;
+                padding: 0 2px;
+            }
+            #victory-screen button {
+                font-size: 1em;
+                padding: 10px 8px;
+                margin: 6px 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1471,24 +1509,26 @@
     </div>
 
     <div id="victory-screen">
-        <!-- Particelle dorate per la schermata di vittoria -->
-        <div class="particles" id="victory-particles">
-            <div class="particle" style="left: 10%; animation-delay: 0s; background: var(--ds-gold-light);"></div>
-            <div class="particle" style="left: 30%; animation-delay: 1s; background: var(--ds-gold);"></div>
-            <div class="particle" style="left: 50%; animation-delay: 2s; background: var(--ds-gold-light);"></div>
-            <div class="particle" style="left: 70%; animation-delay: 3s; background: var(--ds-gold);"></div>
-            <div class="particle" style="left: 90%; animation-delay: 4s; background: var(--ds-gold-light);"></div>
+        <div class="victory-canvas">
+            <!-- Particelle dorate per la schermata di vittoria -->
+            <div class="particles" id="victory-particles">
+                <div class="particle" style="left: 10%; animation-delay: 0s; background: var(--ds-gold-light);"></div>
+                <div class="particle" style="left: 30%; animation-delay: 1s; background: var(--ds-gold);"></div>
+                <div class="particle" style="left: 50%; animation-delay: 2s; background: var(--ds-gold-light);"></div>
+                <div class="particle" style="left: 70%; animation-delay: 3s; background: var(--ds-gold);"></div>
+                <div class="particle" style="left: 90%; animation-delay: 4s; background: var(--ds-gold-light);"></div>
+            </div>
+            <h1>🎉 VITTORIA! 🎉</h1>
+            <p>Hai spezzato la maledizione che ti legava a questo luogo! La tua memoria ritorna, e con essa, un senso di pace e libertà. Il viaggio è compiuto.</p>
+            <div id="victory-stats">
+                <h3>Statistiche Finali</h3>
+                <p>Anime raccolte: <span id="final-souls">0</span></p>
+                <p>Oggetti trovati: <span id="final-items">0</span></p>
+                <p>Fuochi sacri accesi: <span id="final-fires">0</span></p>
+            </div>
+            <button onclick="newGame()">NUOVA PARTITA</button>
+            <button onclick="returnToMenu()">TORNA AL MENU</button>
         </div>
-        <h1>🎉 VITTORIA! 🎉</h1>
-        <p>Hai spezzato la maledizione che ti legava a questo luogo! La tua memoria ritorna, e con essa, un senso di pace e libertà. Il viaggio è compiuto.</p>
-        <div id="victory-stats">
-            <h3>Statistiche Finali</h3>
-            <p>Anime raccolte: <span id="final-souls">0</span></p>
-            <p>Oggetti trovati: <span id="final-items">0</span></p>
-            <p>Fuochi sacri accesi: <span id="final-fires">0</span></p>
-        </div>
-        <button onclick="newGame()">NUOVA PARTITA</button>
-        <button onclick="returnToMenu()">TORNA AL MENU</button>
     </div>
 
     <script>
@@ -1557,12 +1597,412 @@
         let inventory;
         let currentScene;
         let lastSacredFire;
+        
+        // Sistema di flag per prevenire accumulo infinito
+        let visitedScenes = new Set();
+        let completedActions = new Set();
 
         // Sistema di Notifiche In-Game
         let notificationQueue = [];
         let isShowingNotification = false;
         let achievementQueue = [];
         let isShowingAchievement = false;
+
+        // ============================================================================
+        // SISTEMI NARRATIVI AVANZATI - AGGIUNTI
+        // ============================================================================
+
+        // Sistema di memorie e flashback
+        const memorySystem = {
+            memories: {
+                'cella_iniziale': {
+                    trigger: 'explore_cell',
+                    flashback: 'memory_awakening',
+                    karmaEffect: 0,
+                    unlockScene: 'personal_items'
+                },
+                'frammento_specchio': {
+                    trigger: 'find_mirror',
+                    flashback: 'memory_golden_armor',
+                    karmaEffect: 5,
+                    healthEffect: -10,
+                    unlockScene: 'guardian_revelation'
+                },
+                'runa_familiare': {
+                    trigger: 'read_rune',
+                    flashback: 'memory_council',
+                    karmaEffect: 10,
+                    unlockScene: 'truth_revelation'
+                }
+            },
+            
+            triggeredMemories: new Set(),
+            
+            triggerMemory: function(memoryId) {
+                const memory = this.memories[memoryId];
+                if (memory && !this.triggeredMemories.has(memoryId)) {
+                    this.triggeredMemories.add(memoryId);
+                    this.showFlashback(memory.flashback);
+                    
+                    if (memory.karmaEffect) {
+                        karmaSystem.addKarma(memory.karmaEffect);
+                    }
+                    if (memory.healthEffect) {
+                        playerHealth = Math.max(0, playerHealth + memory.healthEffect);
+                        updateUI();
+                    }
+                }
+            },
+            
+            showFlashback: function(flashbackId) {
+                // Controllo di sicurezza
+                if (!flashbackId) {
+                    console.error('Flashback ID non valido');
+                    return;
+                }
+                
+                const flashbacks = {
+                    'memory_awakening': {
+                        title: "Frammento di Memoria",
+                        text: "Un'immagine ti attraversa la mente: sei in una sala maestosa, circondato da altri Guardiani delle Anime. 'Devo farlo,' dici a te stesso, 'anche se significa condannare tutti noi a questo ciclo infinito.'",
+                        choices: [
+                            {
+                                text: "Concentrati sul ricordo",
+                                action: function() {
+                                    if (typeof karmaSystem !== 'undefined') {
+                                        karmaSystem.addKarma(5);
+                                    }
+                                    // Torna alla scena precedente
+                                    if (window.sceneHistory && window.sceneHistory.length > 0) {
+                                        const previousScene = window.sceneHistory.pop();
+                                        const storyText = document.getElementById('story-text');
+                                        if (storyText) {
+                                            storyText.innerHTML = previousScene.text;
+                                        }
+                                        // Ripristina le scelte precedenti
+                                        restoreChoices(previousScene.choices);
+                                    }
+                                }
+                            },
+                            {
+                                text: "Respingi il dolore",
+                                action: function() {
+                                    if (typeof karmaSystem !== 'undefined') {
+                                        karmaSystem.addKarma(-5);
+                                    }
+                                    if (typeof playerHealth !== 'undefined') {
+                                        playerHealth -= 10;
+                                        if (typeof updateUI === 'function') {
+                                            updateUI();
+                                        }
+                                    }
+                                    // Torna alla scena precedente
+                                    if (window.sceneHistory && window.sceneHistory.length > 0) {
+                                        const previousScene = window.sceneHistory.pop();
+                                        const storyText = document.getElementById('story-text');
+                                        if (storyText) {
+                                            storyText.innerHTML = previousScene.text;
+                                        }
+                                        restoreChoices(previousScene.choices);
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    'memory_golden_armor': {
+                        title: "L'Armatura Dorata",
+                        text: "Nel frammento di specchio vedi un uomo in armatura dorata, con il volto segnato dalla determinazione e dal dolore. Ricordi il momento in cui hai preso la decisione più difficile della tua vita.",
+                        choices: [
+                            {
+                                text: "Accetta la verità",
+                                action: function() {
+                                    if (typeof karmaSystem !== 'undefined') {
+                                        karmaSystem.addKarma(15);
+                                    }
+                                    if (window.sceneHistory && window.sceneHistory.length > 0) {
+                                        const previousScene = window.sceneHistory.pop();
+                                        const storyText = document.getElementById('story-text');
+                                        if (storyText) {
+                                            storyText.innerHTML = previousScene.text;
+                                        }
+                                        restoreChoices(previousScene.choices);
+                                    }
+                                }
+                            },
+                            {
+                                text: "Rifiuta il ricordo",
+                                action: function() {
+                                    if (typeof karmaSystem !== 'undefined') {
+                                        karmaSystem.addKarma(-10);
+                                    }
+                                    if (window.sceneHistory && window.sceneHistory.length > 0) {
+                                        const previousScene = window.sceneHistory.pop();
+                                        const storyText = document.getElementById('story-text');
+                                        if (storyText) {
+                                            storyText.innerHTML = previousScene.text;
+                                        }
+                                        restoreChoices(previousScene.choices);
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                };
+                
+                const flashback = flashbacks[flashbackId];
+                if (flashback) {
+                    showMemoryScene(flashback);
+                } else {
+                    console.error(`Flashback non trovato: ${flashbackId}`);
+                }
+            }
+        };
+
+        // Sistema di karma dinamico - BILANCIATO FASE 4
+        const karmaSystem = {
+            currentKarma: 0,
+            maxKarma: 50,        // Ridotto da 100 per bilanciamento
+            minKarma: -50,       // Ridotto da -100 per bilanciamento
+            
+            addKarma: function(amount) {
+                // Limita incrementi massimi per bilanciamento
+                const maxIncrement = 10;
+                const limitedAmount = Math.max(-maxIncrement, Math.min(maxIncrement, amount));
+                
+                const oldKarma = this.currentKarma;
+                this.currentKarma = Math.max(this.minKarma, 
+                                            Math.min(this.maxKarma, 
+                                            this.currentKarma + limitedAmount));
+                
+                this.updateWorldState();
+                this.showKarmaChange(limitedAmount);
+                
+                console.log(`Karma cambiato: ${oldKarma} → ${this.currentKarma} (${limitedAmount > 0 ? '+' : ''}${limitedAmount})`);
+            },
+            
+            updateWorldState: function() {
+                // Cambia reazioni NPC basato su karma
+                if (this.currentKarma > 50) {
+                    window.npcAttitude = 'friendly';
+                } else if (this.currentKarma < -50) {
+                    window.npcAttitude = 'hostile';
+                } else {
+                    window.npcAttitude = 'neutral';
+                }
+            },
+            
+            showKarmaChange: function(amount) {
+                // Mostra un indicatore visivo del cambiamento di karma
+                const karmaIndicator = document.createElement('div');
+                karmaIndicator.className = 'karma-change';
+                karmaIndicator.textContent = amount > 0 ? `+${amount} Karma` : `${amount} Karma`;
+                karmaIndicator.style.cssText = `
+                    color: ${amount > 0 ? '#8aff8a' : '#ff6b6b'};
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 10px;
+                    background: rgba(0,0,0,0.8);
+                    border-radius: 5px;
+                    z-index: 1000;
+                    font-family: 'Cinzel', serif;
+                    font-weight: bold;
+                    text-shadow: 0 0 10px currentColor;
+                `;
+                
+                document.body.appendChild(karmaIndicator);
+                
+                setTimeout(() => {
+                    karmaIndicator.remove();
+                }, 2000);
+            }
+        };
+
+        // ============================================================================
+        // SISTEMA DI CONSEGUENZE DINAMICHE - FASE 3
+        // ============================================================================
+        
+        const consequenceSystem = {
+            // Scene sbloccate/bloccate in base alle scelte
+            unlockedScenes: new Set(),
+            blockedScenes: new Set(),
+            
+            // Dialoghi che cambiano in base al karma
+            npcDialogues: {
+                'veggente': {
+                    friendly: "Ti vedo, figlio mio. Il tuo cuore è puro e la tua anima risplende come una stella nel buio. Il destino ti ha scelto per una missione sacra.",
+                    neutral: "Un viandante... Interessante. Il tuo karma è in equilibrio, come la bilancia della giustizia. Scegli saggiamente il tuo cammino.",
+                    hostile: "Un'anima macchiata dal male si avvicina. Le tue azioni parlano più forte delle tue parole. Pentiti, prima che sia troppo tardi."
+                },
+                'mercante': {
+                    friendly: "Ah, un cliente di valore! Il tuo karma positivo mi dice che sei degno di fiducia. Ho oggetti speciali per anime pure come la tua.",
+                    neutral: "Benvenuto, viandante. Il mio negozio è aperto a tutti, purché abbiano qualcosa da offrire in cambio.",
+                    hostile: "Hmm... Il tuo karma è oscuro. Non so se dovrei fidarmi di te. Forse dovresti cercare altrove."
+                },
+                'guardiano': {
+                    friendly: "Un fratello! Il tuo karma risplende come l'oro antico. Sei degno di conoscere i segreti più profondi di questo luogo.",
+                    neutral: "Un viandante... Il tuo karma è in equilibrio. Forse un giorno sarai degno di conoscere la verità.",
+                    hostile: "Un'anima corrotta! Il tuo karma oscuro ti preclude l'accesso ai segreti sacri. Pentiti o perisci."
+                }
+            },
+            
+            // Scelte con conseguenze complesse
+            choices: {
+                'libera_anima': {
+                    text: "Libero l'anima, anche se mi costa",
+                    karmaEffect: 15,
+                    healthEffect: -20,
+                    unlockScenes: ['spirito_alleato', 'veggente_friendly'],
+                    blockScenes: ['spiriti_ostili', 'mercante_hostile'],
+                    dialogChanges: {
+                        'veggente': 'friendly',
+                        'guardiano': 'friendly'
+                    },
+                    achievement: 'soul_liberator'
+                },
+                'bevi_acqua': {
+                    text: "Bevo l'acqua per sopravvivere",
+                    karmaEffect: -10,
+                    healthEffect: 15,
+                    unlockScenes: ['spiriti_ostili', 'mercante_hostile'],
+                    blockScenes: ['spirito_alleato', 'veggente_friendly'],
+                    dialogChanges: {
+                        'veggente': 'hostile',
+                        'guardiano': 'hostile'
+                    }
+                },
+                'studia_rune': {
+                    text: "Studio le rune per comprendere",
+                    karmaEffect: 10,
+                    healthEffect: -5,
+                    unlockScenes: ['conoscenza_antica', 'veggente_neutral'],
+                    blockScenes: ['ignoranza_volontaria'],
+                    dialogChanges: {
+                        'veggente': 'neutral',
+                        'guardiano': 'neutral'
+                    },
+                    achievement: 'rune_scholar'
+                },
+                'comunica_golem': {
+                    text: "Cerco di comunicare con il golem",
+                    karmaEffect: 20,
+                    healthEffect: -10,
+                    unlockScenes: ['golem_alleato', 'veggente_friendly'],
+                    blockScenes: ['golem_ostile'],
+                    dialogChanges: {
+                        'veggente': 'friendly',
+                        'guardiano': 'friendly'
+                    },
+                    achievement: 'golem_friend'
+                },
+                'sacrifica_memoria': {
+                    text: "Sacrifico un ricordo per il potere",
+                    karmaEffect: -15,
+                    healthEffect: 25,
+                    unlockScenes: ['potere_oscuro', 'mercante_hostile'],
+                    blockScenes: ['memoria_completa', 'veggente_friendly'],
+                    dialogChanges: {
+                        'veggente': 'hostile',
+                        'guardiano': 'hostile'
+                    }
+                }
+            },
+            
+            applyChoice: function(choiceId) {
+                const choice = this.choices[choiceId];
+                if (choice) {
+                    // Applica effetti karma e salute
+                    if (choice.karmaEffect) {
+                        karmaSystem.addKarma(choice.karmaEffect);
+                    }
+                    if (choice.healthEffect) {
+                        playerHealth = Math.max(0, Math.min(maxHealth, playerHealth + choice.healthEffect));
+                        updateUI();
+                    }
+                    
+                    // Sblocca/blocca scene
+                    if (choice.unlockScenes) {
+                        choice.unlockScenes.forEach(scene => {
+                            this.unlockedScenes.add(scene);
+                            console.log(`Scena sbloccata: ${scene}`);
+                        });
+                    }
+                    if (choice.blockScenes) {
+                        choice.blockScenes.forEach(scene => {
+                            this.blockedScenes.add(scene);
+                            console.log(`Scena bloccata: ${scene}`);
+                        });
+                    }
+                    
+                    // Cambia dialoghi NPC
+                    if (choice.dialogChanges) {
+                        Object.keys(choice.dialogChanges).forEach(npc => {
+                            this.updateNPCDialog(npc, choice.dialogChanges[npc]);
+                        });
+                    }
+                    
+                    // Sblocca achievement
+                    if (choice.achievement) {
+                        this.unlockAchievement(choice.achievement);
+                    }
+                    
+                    console.log(`Conseguenza applicata per scelta: ${choiceId}`);
+                }
+            },
+            
+            updateNPCDialog: function(npcId, attitude) {
+                if (this.npcDialogues[npcId] && this.npcDialogues[npcId][attitude]) {
+                    window[`${npcId}_dialog`] = this.npcDialogues[npcId][attitude];
+                    console.log(`Dialogo ${npcId} aggiornato a: ${attitude}`);
+                }
+            },
+            
+            unlockAchievement: function(achievementId) {
+                const achievements = {
+                    'soul_liberator': {
+                        title: "Liberatore di Anime",
+                        description: "Hai liberato un'anima intrappolata",
+                        karmaBonus: 10
+                    },
+                    'rune_scholar': {
+                        title: "Studioso delle Rune",
+                        description: "Hai studiato le rune antiche",
+                        karmaBonus: 5
+                    },
+                    'golem_friend': {
+                        title: "Amico dei Golem",
+                        description: "Hai comunicato con un golem",
+                        karmaBonus: 15
+                    }
+                };
+                
+                const achievement = achievements[achievementId];
+                if (achievement && !window.unlockedAchievements) {
+                    window.unlockedAchievements = new Set();
+                }
+                
+                if (achievement && !window.unlockedAchievements.has(achievementId)) {
+                    window.unlockedAchievements.add(achievementId);
+                    karmaSystem.addKarma(achievement.karmaBonus);
+                    showNotification(`🏆 Achievement: ${achievement.title}`, 'achievement', 5000);
+                    console.log(`Achievement sbloccato: ${achievement.title}`);
+                }
+            },
+            
+            isSceneUnlocked: function(sceneId) {
+                return this.unlockedScenes.has(sceneId);
+            },
+            
+            isSceneBlocked: function(sceneId) {
+                return this.blockedScenes.has(sceneId);
+            },
+            
+            getNPCDialog: function(npcId) {
+                const attitude = karmaSystem.currentKarma > 50 ? 'friendly' : 
+                               karmaSystem.currentKarma < -50 ? 'hostile' : 'neutral';
+                return this.npcDialogues[npcId] ? this.npcDialogues[npcId][attitude] : null;
+            }
+        };
 
         function showNotification(message, type = 'info', duration = 3000) {
             notificationQueue.push({ message, type, duration });
@@ -1840,20 +2280,118 @@
         // Oggetto che definisce le scene del gioco
         const scenes = {
             cellaIniziale: {
-                title: "Cella Umida",
-                text: "Ti risvegli su un giaciglio di paglia bagnata. Le pareti sono di pietra grezza, l'aria è fredda e pesante di umidità e muffa. Una piccola grata in alto lascia intravedere un cielo grigio. Non ricordi nulla.",
+                title: "Il Risveglio nella Prigione",
+                text: "Ti risvegli su un giaciglio di paglia putrescente, il corpo indolenzito da un sonno che sembra essere durato un'eternità. Le pareti di pietra grezza della cella sono ricoperte di rune antiche che pulsano di una luce sinistra, e l'aria è pesante dell'odore di morte e disperazione.\n\nUn piccolo spiraglio in alto lascia filtrare una luce grigia e malaticcia, l'unico segno che esiste ancora un mondo al di fuori di queste mura. Ma è la sensazione più strana che ti tormenta: un vuoto nel petto, come se qualcosa di fondamentale ti fosse stato strappato via.\n\nI tuoi occhi si posano su una parete dove, tra le rune, riconosci il tuo nome inciso con mano tremante: \"Aric\". È tutto quello che ricordi di te stesso.",
+                onEnter: function() {
+                    // Inizializza il sistema di karma se non esiste
+                    if (typeof karmaSystem === 'undefined') {
+                        console.log('Sistema karma non trovato, inizializzazione...');
+                    }
+                },
                 choices: [
-                    { text: "Esplora la cella", nextScene: "esploraCella" },
-                    { text: "Prova a ricordare", nextScene: "ricordaPassato" },
-                    { text: "Grida aiuto", nextScene: "gridaAiuto" }
+                    { 
+                        text: "Esplora la cella con attenzione", 
+                        nextScene: "esploraCella",
+                        onSelect: function() {
+                            executeActionOnce('explore_cell_initial', function() {
+                                if (typeof memorySystem !== 'undefined') {
+                                    memorySystem.triggerMemory('cella_iniziale');
+                                }
+                                // Sblocca scene positive della FASE 3
+                                if (typeof consequenceSystem !== 'undefined') {
+                                    consequenceSystem.unlockedScenes.add('spirito_alleato');
+                                    consequenceSystem.unlockedScenes.add('veggente_friendly');
+                                }
+                            });
+                        }
+                    },
+                    { 
+                        text: "Concentrati sui frammenti di memoria", 
+                        nextScene: "ricordaPassato",
+                        onSelect: function() {
+                            executeActionOnce('concentrate_memories_initial', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    playerHealth -= 5; // Sforzo mentale
+                                    karmaSystem.addKarma(5);
+                                    updateUI();
+                                }
+                            });
+                        }
+                    },
+                    { 
+                        text: "Grida per aiuto, disperato", 
+                        nextScene: "gridaAiuto",
+                        onSelect: function() {
+                            executeActionOnce('cry_for_help_initial', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(-5);
+                                }
+                            });
+                        }
+                    }
                 ]
             },
             esploraCella: {
-                title: "Esplorazione",
-                text: "Scivoli lungo le pareti, sentendo la pietra fredda e scivolosa sotto le dita. In un angolo, dietro un mucchio di detriti, noti una fessura nel muro, quasi impercettibile. Potrebbe essere un passaggio...",
+                title: "Esplorazione della Cella",
+                text: "Scivoli lungo le pareti come un'ombra in cerca di risposte, sentendo la pietra fredda e scivolosa sotto le dita. Ogni runa incisa sembra pulsare con una vita propria, raccontando storie di un passato che non riesci a ricordare.\n\nIn un angolo, dietro un mucchio di detriti che sembrano i resti di un'antica battaglia, noti una fessura nel muro, quasi impercettibile. Ma è l'oggetto accanto che cattura la tua attenzione: un frammento di specchio, così piccolo da sembrare insignificante, eppure qualcosa in esso ti chiama.\n\nL'aria qui è ancora più pesante, satura di memorie che non sono tue, eppure ti appartengono. Ogni respiro ti porta più vicino alla verità, anche se quella verità potrebbe distruggerti.",
+                onEnter: function() {
+                    // Inizializza il sistema di karma se non esiste
+                    if (typeof karmaSystem === 'undefined') {
+                        console.log('Sistema karma non trovato, inizializzazione...');
+                    }
+                },
                 choices: [
-                    { text: "Tenta di allargare la fessura", nextScene: "tunnelSegreto" },
-                    { text: "Cerca qualcos'altro nella cella", nextScene: "cercaNellaCella" }
+                    { 
+                        text: "Esamina il frammento di specchio con attenzione", 
+                        nextScene: "frammentoSpecchio",
+                        onSelect: function() {
+                            executeActionOnce('examine_mirror_fragment', function() {
+                                if (typeof memorySystem !== 'undefined') {
+                                    memorySystem.triggerMemory('frammento_specchio');
+                                }
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(10); // Scoperta importante
+                                }
+                            });
+                        }
+                    },
+                    { 
+                        text: "Tenta di allargare la fessura nel muro", 
+                        nextScene: "tunnelSegreto",
+                        onSelect: function() {
+                            executeActionOnce('widen_crack_wall', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(5); // Azione determinata
+                                }
+                                playerHealth -= 3; // Sforzo fisico
+                                updateUI();
+                            });
+                        }
+                    },
+                    { 
+                        text: "Studia le rune sulle pareti", 
+                        nextScene: "studiareRune",
+                        onSelect: function() {
+                            executeActionOnce('study_wall_runes', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(15); // Approccio intellettuale
+                                }
+                                playerHealth -= 2; // Concentrazione mentale
+                                updateUI();
+                            });
+                        }
+                    },
+                    { 
+                        text: "Cerca altri oggetti nella cella", 
+                        nextScene: "cercaNellaCella",
+                        onSelect: function() {
+                            executeActionOnce('search_cell_objects', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(5); // Esplorazione completa
+                                }
+                            });
+                        }
+                    }
                 ]
             },
             tunnelSegreto: {
@@ -1933,26 +2471,28 @@
                 title: "Pozza d'Acqua",
                 text: "Il passaggio conduce a una piccola pozza d'acqua sotterranea. L'acqua è fresca e potabile. Trovi alcune vecchie monete sul bordo.",
                 onEnter: () => {
-                    // 50% di probabilità di malattia
-                    if (Math.random() < 0.5) {
-                        const damage = Math.floor(Math.random() * 8) + 3; // Danno 3-10 HP
-                        playerHealth -= damage;
-                        // Riduzione temporanea della salute massima
-                        maxHealth = Math.max(80, maxHealth - 5);
-                        showDamageNotification(damage, "acqua contaminata");
-                        showNotification("Salute massima ridotta!", "damage", 3000);
-                        updateUI();
-                        if (playerHealth <= 0) {
-                            loadScene("deathScreen");
-                            return;
+                    executeActionOnce('visit_passaggio_umidito', function() {
+                        // 50% di probabilità di malattia
+                        if (Math.random() < 0.5) {
+                            const damage = Math.floor(Math.random() * 8) + 3; // Danno 3-10 HP
+                            playerHealth -= damage;
+                            // Riduzione temporanea della salute massima
+                            maxHealth = Math.max(80, maxHealth - 5);
+                            showDamageNotification(damage, "acqua contaminata");
+                            showNotification("Salute massima ridotta!", "damage", 3000);
+                            updateUI();
+                            if (playerHealth <= 0) {
+                                loadScene("deathScreen");
+                                return;
+                            }
+                        } else {
+                            souls += 10;
+                            playerHealth = Math.min(maxHealth, playerHealth + 10); // Piccolo recupero salute
+                            updateUI();
+                            showHealNotification(10);
+                            showSoulsNotification(10);
                         }
-                    } else {
-                        souls += 10;
-                        playerHealth = Math.min(maxHealth, playerHealth + 10); // Piccolo recupero salute
-                        updateUI();
-                        showHealNotification(10);
-                        showSoulsNotification(10);
-                    }
+                    });
                 },
                 choices: [
                     { text: "Torna al bivio", nextScene: "biforcazione" }
@@ -1962,14 +2502,16 @@
                 title: "Nido di Ratti",
                 text: "Il passaggio buio porta a un piccolo nido di ratti giganti. Ti attaccano non appena ti avvicini!",
                 onEnter: () => {
-                    const damage = Math.floor(Math.random() * 10) + 5; // Danno tra 5 e 14
-                    playerHealth -= damage;
-                    updateUI();
-                    if (playerHealth <= 0) {
-                        showDeathScreen();
-                    } else {
-                        showDamageNotification(damage, "ratti");
-                    }
+                    executeActionOnce('visit_passaggio_profondo', function() {
+                        const damage = Math.floor(Math.random() * 10) + 5; // Danno tra 5 e 14
+                        playerHealth -= damage;
+                        updateUI();
+                        if (playerHealth <= 0) {
+                            showDeathScreen();
+                        } else {
+                            showDamageNotification(damage, "ratti");
+                        }
+                    });
                 },
                 choices: [
                     { text: "Scappa e torna al bivio", nextScene: "biforcazione" },
@@ -1980,15 +2522,17 @@
                 title: "Dietro il Nido",
                 text: "Con cautela, superi il nido. Dietro di esso, trovi una piccola nicchia con una vecchia Sacca di Cuoio.",
                 onEnter: () => {
-                    if (!inventory.includes("Sacca di Cuoio")) {
-                        inventory.push("Sacca di Cuoio");
-                        souls += 20; // Contiene 20 anime
-                        updateUI();
-                        showItemNotification("Sacca di Cuoio", true);
-                        showSoulsNotification(20);
-                    } else {
-                        showNotification("Non c'è più nulla da trovare qui.", "info", 2000);
-                    }
+                    executeActionOnce('visit_nido_ratti', function() {
+                        if (!inventory.includes("Sacca di Cuoio")) {
+                            inventory.push("Sacca di Cuoio");
+                            souls += 20; // Contiene 20 anime
+                            updateUI();
+                            showItemNotification("Sacca di Cuoio", true);
+                            showSoulsNotification(20);
+                        } else {
+                            showNotification("Non c'è più nulla da trovare qui.", "info", 2000);
+                        }
+                    });
                 },
                 choices: [
                     { text: "Torna indietro al bivio", nextScene: "biforcazione" }
@@ -2024,27 +2568,29 @@
                 text: "Il Golem carica con un ruggito roccioso. È un colosso di pietra, ogni suo pugno è come un macigno. Continui a combattere.",
                 onEnter: () => {
                     if (!foughtGolem) {
-                        // Aumento danni da 10-24 a 15-34
-                        const damage = Math.floor(Math.random() * 20) + 15; // Danno tra 15 e 34
-                        
-                        // 30% di probabilità di attacco speciale (danno extra)
-                        const specialAttack = Math.random() < 0.3;
-                        let totalDamage = damage;
-                        let message = `Hai subito ${damage} danni.`;
-                        
-                        if (specialAttack) {
-                            const extraDamage = Math.floor(Math.random() * 10) + 5; // Danno extra 5-14
-                            totalDamage += extraDamage;
-                            message = `Il Golem sferra un attacco speciale! Hai subito ${damage} + ${extraDamage} = ${totalDamage} danni totali.`;
-                        }
-                        
-                        playerHealth -= totalDamage;
-                        updateUI();
-                        if (playerHealth <= 0) {
-                            showDeathScreen();
-                        } else {
-                            showDamageNotification(totalDamage, "Golem");
-                        }
+                        executeActionOnce('fight_golem_round', function() {
+                            // Aumento danni da 10-24 a 15-34
+                            const damage = Math.floor(Math.random() * 20) + 15; // Danno tra 15 e 34
+                            
+                            // 30% di probabilità di attacco speciale (danno extra)
+                            const specialAttack = Math.random() < 0.3;
+                            let totalDamage = damage;
+                            let message = `Hai subito ${damage} danni.`;
+                            
+                            if (specialAttack) {
+                                const extraDamage = Math.floor(Math.random() * 10) + 5; // Danno extra 5-14
+                                totalDamage += extraDamage;
+                                message = `Il Golem sferra un attacco speciale! Hai subito ${damage} + ${extraDamage} = ${totalDamage} danni totali.`;
+                            }
+                            
+                            playerHealth -= totalDamage;
+                            updateUI();
+                            if (playerHealth <= 0) {
+                                showDeathScreen();
+                            } else {
+                                showDamageNotification(totalDamage, "Golem");
+                            }
+                        });
                     }
                 },
                 choices: [
@@ -2136,17 +2682,19 @@
                 title: "Terre Selvagge",
                 text: "Il vento ti accarezza il viso mentre esci all'aperto. Ti trovi in un vasto altopiano roccioso, costellato di arbusti secchi e imponenti formazioni rocciose. All'orizzonte, vedi le luci di quella che sembra una piccola città.",
                 onEnter: () => {
-                    // 40% di probabilità di incontro con predatori
-                    if (Math.random() < 0.4) {
-                        const damage = Math.floor(Math.random() * 13) + 8; // Danno 8-20 HP
-                        playerHealth -= damage;
-                        showDamageNotification(damage, "predatori");
-                        updateUI();
-                        if (playerHealth <= 0) {
-                            loadScene("deathScreen");
-                            return;
+                    executeActionOnce('visit_terre_selvagge', function() {
+                        // 40% di probabilità di incontro con predatori
+                        if (Math.random() < 0.4) {
+                            const damage = Math.floor(Math.random() * 13) + 8; // Danno 8-20 HP
+                            playerHealth -= damage;
+                            showDamageNotification(damage, "predatori");
+                            updateUI();
+                            if (playerHealth <= 0) {
+                                loadScene("deathScreen");
+                                return;
+                            }
                         }
-                    }
+                    });
                     
                     if (lastSacredFire !== "fuocoSacroTerre") {
                         updateSacredFire("fuocoSacroTerre");
@@ -2162,44 +2710,46 @@
                 title: "Cerca Risorse",
                 text: "Rovisti tra gli arbusti e le rocce. Trovi alcune bacche commestibili e un piccolo gruppo di anime.",
                 onEnter: () => {
-                    // 25% di probabilità di piante velenose
-                    if (Math.random() < 0.25) {
-                        const damage = Math.floor(Math.random() * 8) + 5; // Danno 5-12 HP
-                        playerHealth -= damage;
-                        showDamageNotification(damage, "piante velenose");
-                        updateUI();
-                        if (playerHealth <= 0) {
-                            loadScene("deathScreen");
-                            return;
+                    executeActionOnce('search_wild_resources', function() {
+                        // 25% di probabilità di piante velenose
+                        if (Math.random() < 0.25) {
+                            const damage = Math.floor(Math.random() * 8) + 5; // Danno 5-12 HP
+                            playerHealth -= damage;
+                            showDamageNotification(damage, "piante velenose");
+                            updateUI();
+                            if (playerHealth <= 0) {
+                                loadScene("deathScreen");
+                                return;
+                            }
                         }
-                    }
-                    
-                    souls += 15;
-                    playerHealth = Math.min(maxHealth, playerHealth + 5); // Piccolo recupero salute
-                    
-                    // Possibilità di trovare ingredienti di crafting
-                    const randomChance = Math.random();
-                    if (randomChance < 0.3 && !inventory.includes("Erba Curativa")) {
-                        inventory.push("Erba Curativa");
-                        showItemNotification("Erba Curativa", true);
-                        showHealNotification(5);
-                        showSoulsNotification(15);
-                    } else if (randomChance < 0.5 && !inventory.includes("Erba di Forza")) {
-                        inventory.push("Erba di Forza");
-                        showItemNotification("Erba di Forza", true);
-                        showHealNotification(5);
-                        showSoulsNotification(15);
-                    } else if (randomChance < 0.7 && !inventory.includes("Acqua Pura")) {
-                        inventory.push("Acqua Pura");
-                        showItemNotification("Acqua Pura", true);
-                        showHealNotification(5);
-                        showSoulsNotification(15);
-                    } else {
-                        showSoulsNotification(15);
-                        showHealNotification(5);
-                    }
-                    
-                    updateUI();
+                        
+                        souls += 15;
+                        playerHealth = Math.min(maxHealth, playerHealth + 5); // Piccolo recupero salute
+                        
+                        // Possibilità di trovare ingredienti di crafting
+                        const randomChance = Math.random();
+                        if (randomChance < 0.3 && !inventory.includes("Erba Curativa")) {
+                            inventory.push("Erba Curativa");
+                            showItemNotification("Erba Curativa", true);
+                            showHealNotification(5);
+                            showSoulsNotification(15);
+                        } else if (randomChance < 0.5 && !inventory.includes("Erba di Forza")) {
+                            inventory.push("Erba di Forza");
+                            showItemNotification("Erba di Forza", true);
+                            showHealNotification(5);
+                            showSoulsNotification(15);
+                        } else if (randomChance < 0.7 && !inventory.includes("Acqua Pura")) {
+                            inventory.push("Acqua Pura");
+                            showItemNotification("Acqua Pura", true);
+                            showHealNotification(5);
+                            showSoulsNotification(15);
+                        } else {
+                            showSoulsNotification(15);
+                            showHealNotification(5);
+                        }
+                        
+                        updateUI();
+                    });
                 },
                 choices: [
                     { text: "Continua a esplorare le terre selvagge", nextScene: "terreSelvagge" },
@@ -2210,17 +2760,19 @@
                 title: "Ingresso della Città",
                 text: "Ti avvicini a quella che sembra una città di frontiera, circondata da un muro di legno. Dalle strade, senti le voci della gente e il rumore di attrezzi. Sembra un luogo sicuro.",
                 onEnter: () => {
-                    // 20% di probabilità di guardie sospettose
-                    if (Math.random() < 0.2) {
-                        const damage = Math.floor(Math.random() * 6) + 3; // Danno 3-8 HP
-                        playerHealth -= damage;
-                        showDamageNotification(damage, "guardie sospettose");
-                        updateUI();
-                        if (playerHealth <= 0) {
-                            loadScene("deathScreen");
-                            return;
+                    executeActionOnce('visit_ingresso_citta', function() {
+                        // 20% di probabilità di guardie sospettose
+                        if (Math.random() < 0.2) {
+                            const damage = Math.floor(Math.random() * 6) + 3; // Danno 3-8 HP
+                            playerHealth -= damage;
+                            showDamageNotification(damage, "guardie sospettose");
+                            updateUI();
+                            if (playerHealth <= 0) {
+                                loadScene("deathScreen");
+                                return;
+                            }
                         }
-                    }
+                    });
                 },
                 choices: [
                     { text: "Entra in città", nextScene: "distrettoMercantile" },
@@ -3312,10 +3864,542 @@
                     { text: "Continua il viaggio", nextScene: "terreSelvagge" },
                     { text: "Cerca un altro rifugio", nextScene: "rovineTempio" }
                 ]
+            },
+            frammentoSpecchio: {
+                title: "Il Frammento di Specchio",
+                text: "Il frammento di specchio è più di quello che sembra. Quando lo sollevi, la sua superficie non riflette la tua immagine attuale, ma qualcosa di molto più antico. Per un momento, vedi un uomo in armatura dorata, con il volto segnato dalla determinazione e dal dolore.\n\nIl ricordo è così vivido che quasi ti fa male: sei in una sala maestosa, circondato da altri Guardiani delle Anime. 'Devo farlo,' dici a te stesso nel ricordo, 'anche se significa condannare tutti noi a questo ciclo infinito.'\n\nIl frammento si riscalda tra le tue mani, e senti una connessione profonda con quell'uomo dell'armatura dorata. È te stesso, in un altro tempo, in un'altra vita.",
+                choices: [
+                    {
+                        text: "Concentrati sul ricordo, accetta la verità",
+                        nextScene: "accettareVerita",
+                        onSelect: function() {
+                            executeActionOnce('accept_truth_mirror', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(20); // Accettazione della verità
+                                }
+                                playerHealth += 10; // Pace interiore
+                                updateUI();
+                            });
+                        }
+                    },
+                    {
+                        text: "Rifiuta il ricordo, è troppo doloroso",
+                        nextScene: "rifiutareRicordo",
+                        onSelect: function() {
+                            executeActionOnce('reject_truth_mirror', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(-10); // Rifiuto della verità
+                                }
+                                playerHealth -= 15; // Stress emotivo
+                                updateUI();
+                            });
+                        }
+                    },
+                    {
+                        text: "Cerca di capire di più, studia il frammento",
+                        nextScene: "studiareFrammento",
+                        onSelect: function() {
+                            executeActionOnce('study_fragment_investigation', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(15); // Approccio investigativo
+                                }
+                                playerHealth -= 5; // Sforzo mentale
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            studiareRune: {
+                title: "Le Rune Antiche",
+                text: "Le rune sulle pareti non sono semplici decorazioni: sono una storia, la TUA storia. Mentre le studi, i simboli iniziano a brillare con una luce dorata, e le parole si formano nella tua mente come se fossero sempre state lì.\n\n'Guardiano delle Anime, Custode della Maledizione, Protettore di Eldoria.' Questi sono i tuoi titoli, i tuoi ruoli. Ma c'è di più: le rune raccontano di una decisione presa secoli fa, di un sacrificio fatto per salvare il mondo da qualcosa di molto più terribile.\n\nOgni runa che leggi ti riporta un frammento di memoria, e con ogni frammento, il peso della responsabilità diventa più pesante.",
+                choices: [
+                    {
+                        text: "Continua a leggere, devi sapere tutto",
+                        nextScene: "leggereTutto",
+                        onSelect: function() {
+                            executeActionOnce('read_all_runes', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(25); // Determinazione a conoscere
+                                }
+                                playerHealth -= 10; // Sforzo mentale intenso
+                                updateUI();
+                            });
+                        }
+                    },
+                    {
+                        text: "Fermati, alcune verità sono troppo dolorose",
+                        nextScene: "fermareLettura",
+                        onSelect: function() {
+                            executeActionOnce('stop_reading_runes', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(-5); // Paura della verità
+                                }
+                                playerHealth -= 5; // Stress emotivo
+                                updateUI();
+                            });
+                        }
+                    },
+                    {
+                        text: "Cerca di decifrare solo le parti essenziali",
+                        nextScene: "decifrareEssenziale",
+                        onSelect: function() {
+                            executeActionOnce('read_essential_runes', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(10); // Approccio equilibrato
+                                }
+                                playerHealth -= 3; // Sforzo moderato
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            accettareVerita: {
+                title: "La Verità Accettata",
+                text: "Con ogni respiro, la verità si insinua più profondamente nella tua anima. Non sei un semplice prigioniero: sei Aric, l'ultimo Guardiano delle Anime, e hai scelto volontariamente questa maledizione per salvare Eldoria.\n\nIl peso della responsabilità è immenso, ma ora che lo accetti, senti una strana pace. Le memorie tornano a poco a poco: la sala del consiglio, i tuoi compagni Guardiani, la decisione fatidica. Non è stato un errore, ma un sacrificio necessario.\n\nIl frammento di specchio ora brilla con una luce dorata, e senti che il tuo potere come Guardiano sta tornando. Ora che hai questa consapevolezza, puoi procedere con determinazione.",
+                choices: [
+                    {
+                        text: "Continua a esplorare la cella",
+                        nextScene: "esploraCella",
+                        onSelect: function() {
+                            executeActionOnce('accept_truth_choice', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(15); // Determinazione rinnovata
+                                }
+                                playerHealth += 20; // Energia rinnovata
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            rifiutareRicordo: {
+                title: "Il Ricordo Rifiutato",
+                text: "Con un gesto brusco, getti via il frammento di specchio. Non vuoi sapere, non puoi sapere. Se quella persona dell'armatura dorata sei davvero tu, allora preferisci rimanere nell'ignoranza.\n\nMa il ricordo non se ne va così facilmente. Continua a tormentarti, come un'eco che non si placa. Ogni volta che chiudi gli occhi, vedi quella sala maestosa, quei volti familiari, quella decisione che ha cambiato tutto.\n\nL'aria della cella sembra più pesante ora, come se le pareti stesse ti giudicassero per la tua codardia. Devi trovare un modo per uscire da qui.",
+                choices: [
+                    {
+                        text: "Continua a cercare una via d'uscita",
+                        nextScene: "esploraCella",
+                        onSelect: function() {
+                            executeActionOnce('reject_memory_choice', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(-10); // Fuga dalla verità
+                                }
+                                playerHealth -= 10; // Stress persistente
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            studiareFrammento: {
+                title: "Studio Approfondito",
+                text: "Con attenzione meticolosa, esamini ogni dettaglio del frammento di specchio. Non è solo vetro: è un artefatto antico, inciso con rune microscopiche che raccontano una storia di potere e sacrificio.\n\nAttraverso lo studio, scopri che il frammento è parte di un oggetto più grande: lo Specchio delle Anime, un artefatto che permette ai Guardiani di vedere il passato e il futuro. Ma c'è di più: il frammento contiene anche un frammento della tua anima.\n\nQuesta scoperta ti dà un potere limitato ma prezioso: puoi usare il frammento per accedere a memorie specifiche quando ne hai bisogno.",
+                choices: [
+                    {
+                        text: "Usa il frammento per accedere a più memorie",
+                        nextScene: "accedereMemorie",
+                        onSelect: function() {
+                            executeActionOnce('use_fragment_memories', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(20); // Approccio metodico
+                                }
+                                playerHealth -= 5; // Sforzo mentale
+                                updateUI();
+                            });
+                        }
+                    },
+                    {
+                        text: "Conserva il frammento e continua a esplorare",
+                        nextScene: "esploraCella",
+                        onSelect: function() {
+                            executeActionOnce('keep_fragment_explore', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(10); // Saggezza
+                                }
+                                // Aggiungi il frammento all'inventario
+                                if (typeof inventory !== 'undefined') {
+                                    inventory.push("Frammento di Specchio");
+                                    updateUI();
+                                }
+                            });
+                        }
+                    }
+                ]
+            },
+            leggereTutto: {
+                title: "La Storia Completa",
+                text: "Le rune si aprono davanti a te come un libro infinito, e ogni parola che leggi ti riporta un frammento di memoria. La storia è completa ora: sei Aric, l'ultimo Guardiano delle Anime, e hai scelto di sacrificare la tua umanità per salvare Eldoria da una minaccia antica.\n\nIl 'Male Oscuro' che minacciava il mondo non poteva essere sconfitto con la forza, ma solo con un sacrificio: rinunciare alla propria umanità per diventare un custode immortale. Tu e i tuoi compagni avete accettato questa maledizione, ma il prezzo è stato alto.\n\nOra capisci: questa prigione non è una punizione, ma un test. Devi dimostrare di essere ancora degno del tuo ruolo di Guardiano.",
+                choices: [
+                    {
+                        text: "Accetta il tuo ruolo di Guardiano",
+                        nextScene: "accettareRuolo",
+                        onSelect: function() {
+                            executeActionOnce('accept_guardian_role', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(30); // Accettazione completa
+                                }
+                                playerHealth += 25; // Energia rinnovata
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            fermareLettura: {
+                title: "La Lettura Interrotta",
+                text: "Con un gesto brusco, distogli lo sguardo dalle rune. Non puoi continuare a leggere, non ora. La verità che stai scoprendo è troppo dolorosa, troppo opprimente.\n\nMa anche se hai smesso di leggere, le poche parole che hai visto continuano a tormentarti. 'Guardiano delle Anime', 'Custode della Maledizione', 'Protettore di Eldoria' - questi titoli ti appartengono, anche se non li ricordi.\n\nL'aria della cella sembra più pesante ora, come se le pareti stesse ti giudicassero per la tua debolezza. Devi trovare un'altra via d'uscita.",
+                choices: [
+                    {
+                        text: "Continua a cercare una via d'uscita",
+                        nextScene: "esploraCella",
+                        onSelect: function() {
+                            executeActionOnce('reject_responsibility', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(-15); // Rifiuto della responsabilità
+                                }
+                                playerHealth -= 15; // Stress emotivo
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            decifrareEssenziale: {
+                title: "Le Verità Essenziali",
+                text: "Con un approccio metodico, ti concentri solo sulle rune più importanti. Non hai bisogno di sapere tutto, solo quello che ti serve per sopravvivere e capire la tua situazione.\n\nQuello che scopri è sufficiente: sei Aric, un Guardiano delle Anime, e questa prigione è parte di un test o di una prova. Le rune parlano di una 'maledizione necessaria' e di un 'sacrificio per il bene superiore'.\n\nNon hai tutti i dettagli, ma hai abbastanza informazioni per procedere con cautela e determinazione. A volte, la saggezza sta nel sapere quando fermarsi.",
+                choices: [
+                    {
+                        text: "Continua a esplorare con le informazioni acquisite",
+                        nextScene: "esploraCella",
+                        onSelect: function() {
+                            executeActionOnce('continue_balanced_approach', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(15); // Approccio equilibrato
+                                }
+                                playerHealth += 5; // Pace interiore
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            accedereMemorie: {
+                title: "Memorie Profonde",
+                text: "Concentrando la tua volontà sul frammento di specchio, senti la sua energia pulsare tra le tue mani. Le memorie fluiscono come un fiume di luce dorata, e improvvisamente sei trasportato in un altro tempo.\n\nVedi te stesso in una sala maestosa, circondato da altri Guardiani delle Anime. La discussione è accesa, e tu stai parlando con passione: 'La maledizione è l'unica soluzione,' dici, 'ma il prezzo sarà alto. Tutti noi dovremo rinunciare alla nostra umanità per proteggere Eldoria.'\n\nIl ricordo si interrompe bruscamente, ma ora hai una comprensione più profonda del tuo ruolo. Non sei una vittima, ma un eroe che ha scelto il sacrificio.",
+                choices: [
+                    {
+                        text: "Ritorna alla cella con nuova consapevolezza",
+                        nextScene: "esploraCella",
+                        onSelect: function() {
+                            executeActionOnce('deep_understanding_memories', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(25); // Comprensione profonda
+                                }
+                                playerHealth += 15; // Energia rinnovata
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            accettareRuolo: {
+                title: "Il Guardiano Riconosciuto",
+                text: "Con ogni fibra del tuo essere, accetti il tuo ruolo di Guardiano delle Anime. Non è una maledizione, ma un'onore: sei stato scelto per proteggere Eldoria, e ora che ricordi, sei pronto a servire di nuovo.\n\nLe rune sulle pareti brillano con una luce dorata, riconoscendo la tua accettazione. Senti il potere fluire di nuovo attraverso di te, non come una forza esterna, ma come parte integrante della tua essenza.\n\nLa cella non è più una prigione, ma un luogo di riflessione e preparazione. Ora sei pronto per affrontare le sfide che ti aspettano, con la piena consapevolezza del tuo destino.",
+                choices: [
+                    {
+                        text: "Procedi come Guardiano delle Anime",
+                        nextScene: "esploraCella",
+                        onSelect: function() {
+                            executeActionOnce('complete_guardian_acceptance', function() {
+                                if (typeof karmaSystem !== 'undefined') {
+                                    karmaSystem.addKarma(35); // Accettazione completa del ruolo
+                                }
+                                playerHealth += 30; // Energia massima
+                                updateUI();
+                            });
+                        }
+                    }
+                ]
+            },
+            
+            // ============================================================================
+            // SCENE MIGLIORATE FASE 3 - SISTEMA CONSEQUENZIALE
+            // ============================================================================
+            
+            // Scene che si sbloccano con scelte positive
+            spiritoAlleato: {
+                title: "L'Alleato Spirituale",
+                text: "L'anima che hai liberato si materializza davanti a te come una figura luminosa, vestita con abiti antichi. I suoi occhi brillano di gratitudine e saggezza.\n\n'Grazie, Guardiano,' sussurra con una voce che sembra provenire da un altro mondo. 'Hai fatto la scelta giusta, anche se ti è costata caro. Ora sono libero di continuare il mio viaggio, ma prima posso aiutarti.'\n\nLo spirito ti porge un oggetto luminoso: una gemma che pulsa con energia sacra. 'Prendi questo. Ti aiuterà a ricordare chi sei veramente.'",
+                onEnter: function() {
+                    if (typeof consequenceSystem !== 'undefined' && consequenceSystem.isSceneUnlocked('spirito_alleato')) {
+                        inventory.push('Gemma Spirituale');
+                        updateUI();
+                        showNotification('✨ Gemma Spirituale ottenuta!', 'item', 3000);
+                    }
+                },
+                choices: [
+                    {
+                        text: "Accetta la gemma con gratitudine",
+                        nextScene: "veggenteFriendly",
+                        onSelect: function() {
+                            consequenceSystem.applyChoice('libera_anima');
+                        }
+                    },
+                    {
+                        text: "Chiedi informazioni sul passato",
+                        nextScene: "memoriaCompleta",
+                        onSelect: function() {
+                            karmaSystem.addKarma(10);
+                            updateUI();
+                        }
+                    }
+                ]
+            },
+            
+            veggenteFriendly: {
+                title: "Il Veggente Benevolo",
+                text: "Entri in una stanza illuminata da candele antiche, dove un veggente con occhi che brillano di saggezza millenaria ti attende. Il suo volto si illumina quando ti vede.\n\n'Ah, un'anima pura!' esclama con gioia. 'Il tuo karma risplende come l'oro antico. Sei degno di conoscere i segreti più profondi di questo luogo.'\n\nIl veggente ti conduce a un tavolo coperto di pergamene antiche e oggetti misteriosi. 'Hai fatto la scelta giusta liberando quell'anima. Ora posso aiutarti a comprendere il tuo vero ruolo.'",
+                choices: [
+                    {
+                        text: "Ascolta la saggezza del veggente",
+                        nextScene: "conoscenzaAntica",
+                        onSelect: function() {
+                            karmaSystem.addKarma(15);
+                            updateUI();
+                        }
+                    },
+                    {
+                        text: "Chiedi informazioni sui tuoi poteri",
+                        nextScene: "poteriSacri",
+                        onSelect: function() {
+                            karmaSystem.addKarma(10);
+                            updateUI();
+                        }
+                    }
+                ]
+            },
+            
+            conoscenzaAntica: {
+                title: "La Conoscenza Proibita",
+                text: "Il veggente spiega le rune antiche con una voce che sembra provenire da un altro tempo. 'Queste rune raccontano la storia di Eldoria, di come il mondo sia stato salvato da una catastrofe imminente attraverso un sacrificio collettivo.'\n\n'Tu, Aric, eri uno dei Guardiani scelti per mantenere la maledizione che protegge il mondo. Ma qualcosa è andato storto, e ora sei qui, dimentico del tuo ruolo.'\n\nLe pergamene mostrano immagini di un tempo passato: tu e altri Guardiani in una cerimonia sacra, il momento in cui la maledizione è stata creata per salvare tutti.",
+                choices: [
+                    {
+                        text: "Studia le pergamene più da vicino",
+                        nextScene: "veritaCompleta",
+                        onSelect: function() {
+                            consequenceSystem.applyChoice('studia_rune');
+                        }
+                    },
+                    {
+                        text: "Chiedi come ripristinare i tuoi poteri",
+                        nextScene: "ripristinoPoteri",
+                        onSelect: function() {
+                            karmaSystem.addKarma(20);
+                            updateUI();
+                        }
+                    }
+                ]
+            },
+            
+            // Scene che si sbloccano con scelte negative
+            spiritiOstili: {
+                title: "Gli Spiriti Ostili",
+                text: "L'aria si riempie di presenze malevoli, spiriti che ti circondano con occhi pieni di rancore. Le loro voci sussurrano parole di odio e vendetta.\n\n'Sei come gli altri,' sibila uno spirito. 'Prendi quello che ti serve e abbandoni chi ti ha aiutato. Non meriti la nostra fiducia.'\n\nGli spiriti iniziano a tormentarti, causando dolore fisico e mentale. Il loro odio è palpabile, e senti la loro energia negativa che ti avvolge come una morsa.",
+                choices: [
+                    {
+                        text: "Cerca di placare gli spiriti",
+                        nextScene: "mercanteHostile",
+                        onSelect: function() {
+                            consequenceSystem.applyChoice('bevi_acqua');
+                        }
+                    },
+                    {
+                        text: "Fuggi dalla stanza",
+                        nextScene: "corridoioOscuro",
+                        onSelect: function() {
+                            playerHealth -= 20;
+                            karmaSystem.addKarma(-15);
+                            updateUI();
+                        }
+                    }
+                ]
+            },
+            
+            mercanteHostile: {
+                title: "Il Mercante Diffidente",
+                text: "Il mercante ti guarda con sospetto, i suoi occhi stretti mentre valuta la tua persona. Il suo negozio sembra più buio e minaccioso ora.\n\n'Hmm... Il tuo karma è oscuro,' dice con cautela. 'Non so se dovrei fidarmi di te. Le tue azioni parlano più forte delle tue parole.'\n\nGli oggetti nel negozio sembrano meno invitanti, e alcuni addirittura sembrano pulsare con energia malevola. Il mercante tiene la mano vicino a un'arma nascosta.",
+                choices: [
+                    {
+                        text: "Cerca di convincere il mercante",
+                        nextScene: "negoziazioneDifficile",
+                        onSelect: function() {
+                            karmaSystem.addKarma(-10);
+                            updateUI();
+                        }
+                    },
+                    {
+                        text: "Accetta la diffidenza e vai via",
+                        nextScene: "corridoioOscuro",
+                        onSelect: function() {
+                            karmaSystem.addKarma(-5);
+                            updateUI();
+                        }
+                    }
+                ]
+            },
+            
+            // Scene speciali per comunicazione con golem
+            golemAlleato: {
+                title: "Il Golem Amichevole",
+                text: "Il golem di pietra si ferma davanti a te, i suoi occhi di cristallo che brillano con intelligenza antica. Invece di attaccare, si inchina leggermente in segno di rispetto.\n\n'Guardiano,' dice con una voce che risuona come pietra che si muove. 'Riconosco la tua aura. Sei uno di noi, un protettore di questo luogo sacro.'\n\nIl golem ti porge una mano aperta, rivelando una runa incisa nel palmo. 'Prendi questa conoscenza. Ti aiuterà a ricordare il tuo vero scopo.'",
+                choices: [
+                    {
+                        text: "Accetta la conoscenza del golem",
+                        nextScene: "runaGolem",
+                        onSelect: function() {
+                            consequenceSystem.applyChoice('comunica_golem');
+                        }
+                    },
+                    {
+                        text: "Chiedi informazioni sui tuoi poteri",
+                        nextScene: "poteriGolem",
+                        onSelect: function() {
+                            karmaSystem.addKarma(15);
+                            updateUI();
+                        }
+                    }
+                ]
+            },
+            
+            runaGolem: {
+                title: "La Runa del Golem",
+                text: "La runa che il golem ti ha donato brilla con una luce dorata, e improvvisamente la conoscenza fluisce nella tua mente come un fiume di ricordi.\n\nVedi te stesso in un laboratorio antico, circondato da golem come questo. Stai insegnando loro a proteggere i segreti di Eldoria, a mantenere l'equilibrio tra il mondo fisico e quello spirituale.\n\n'Sei stato un maestro dei golem,' dice il golem. 'Hai creato molti di noi per proteggere questo luogo. Ora che ricordi, puoi riprendere il tuo ruolo.'",
+                choices: [
+                    {
+                        text: "Accetta il ruolo di maestro dei golem",
+                        nextScene: "maestroGolem",
+                        onSelect: function() {
+                            karmaSystem.addKarma(25);
+                            playerHealth += 20;
+                            updateUI();
+                        }
+                    },
+                    {
+                        text: "Chiedi aiuto per ripristinare i tuoi poteri",
+                        nextScene: "ripristinoPoteri",
+                        onSelect: function() {
+                            karmaSystem.addKarma(15);
+                            updateUI();
+                        }
+                    }
+                ]
+            },
+            
+            // Scene per potere oscuro
+            potereOscuro: {
+                title: "Il Potere Oscuro",
+                text: "Il sacrificio della memoria ti ha dato accesso a poteri che non dovresti possedere. L'energia oscura fluisce attraverso di te, dandoti forza ma corrompendo la tua anima.\n\nLe ombre sembrano rispondere ai tuoi comandi, e senti una connessione con le forze più oscure di questo mondo. Il potere è seducente, ma sai che ha un prezzo.\n\n'Il potere oscuro ti ha chiamato,' sussurra una voce nelle tue orecchie. 'Abraccialo, e diventerai più forte di quanto tu abbia mai immaginato.'",
+                choices: [
+                    {
+                        text: "Abraccia il potere oscuro",
+                        nextScene: "corruzioneCompleta",
+                        onSelect: function() {
+                            consequenceSystem.applyChoice('sacrifica_memoria');
+                        }
+                    },
+                    {
+                        text: "Resisti alla tentazione",
+                        nextScene: "resistenzaOscurita",
+                        onSelect: function() {
+                            karmaSystem.addKarma(20);
+                            playerHealth -= 10;
+                            updateUI();
+                        }
+                    }
+                ]
+            },
+            
+            memoriaCompleta: {
+                title: "La Memoria Completa",
+                text: "Lo spirito ti tocca la fronte, e improvvisamente tutti i ricordi tornano in un torrente di immagini e sensazioni. Vedi la tua vita passata in dettaglio: la tua formazione come Guardiano, la decisione di creare la maledizione, il sacrificio che hai fatto per salvare Eldoria.\n\n'Ricordi ora?' chiede lo spirito. 'Sei Aric, Guardiano delle Anime, e questa non è una prigione ma un luogo di riflessione. La maledizione che hai creato protegge il mondo da una minaccia ancora più grande.'\n\nCon la memoria completa, senti il potere fluire di nuovo attraverso di te, non come una forza esterna ma come parte integrante della tua essenza.",
+                choices: [
+                    {
+                        text: "Accetta completamente il tuo ruolo",
+                        nextScene: "guardianoCompleto",
+                        onSelect: function() {
+                            karmaSystem.addKarma(50);
+                            playerHealth += 50;
+                            updateUI();
+                        }
+                    },
+                    {
+                        text: "Chiedi come rompere la maledizione",
+                        nextScene: "rompereMaledizione",
+                        onSelect: function() {
+                            karmaSystem.addKarma(30);
+                            updateUI();
+                        }
+                    }
+                ]
             }
         };
 
         // Funzioni di gestione del gioco
+
+        // ============================================================================
+        // SISTEMA RESISTENZA FASE 4 - BILANCIAMENTO
+        // ============================================================================
+        
+        // Sistema di resistenza basato su karma
+        function calculateDamage(baseDamage) {
+            const karmaResistance = Math.max(0, karmaSystem.currentKarma) / 10;
+            const finalDamage = Math.max(1, baseDamage - karmaResistance);
+            return Math.floor(finalDamage);
+        }
+        
+        // ============================================================================
+        // FUNZIONI SUPPORTO FASE 3 - SISTEMA CONSEQUENZIALE
+        // ============================================================================
+        
+        function checkConsequenceSystem() {
+            if (typeof consequenceSystem === 'undefined') {
+                console.error('Sistema consequenziale non trovato!');
+                return false;
+            }
+            return true;
+        }
+        
+        function unlockScene(sceneId) {
+            if (checkConsequenceSystem()) {
+                consequenceSystem.unlockedScenes.add(sceneId);
+                console.log(`Scena sbloccata: ${sceneId}`);
+                showNotification(`🔓 Nuova area sbloccata!`, 'unlock', 3000);
+            }
+        }
+        
+        function blockScene(sceneId) {
+            if (checkConsequenceSystem()) {
+                consequenceSystem.blockedScenes.add(sceneId);
+                console.log(`Scena bloccata: ${sceneId}`);
+            }
+        }
+        
+        function isSceneAvailable(sceneId) {
+            if (checkConsequenceSystem()) {
+                return consequenceSystem.isSceneUnlocked(sceneId) && 
+                       !consequenceSystem.isSceneBlocked(sceneId);
+            }
+            return true; // Fallback se il sistema non è disponibile
+        }
+        
+        function getNPCDialog(npcId) {
+            if (checkConsequenceSystem()) {
+                return consequenceSystem.getNPCDialog(npcId);
+            }
+            return null;
+        }
 
         function showDeathScreen() {
             const deathScreen = document.getElementById('death-screen');
@@ -3376,6 +4460,10 @@
                 secretExplorer: false
             };
             currentScene = "cellaIniziale";
+            
+            // Reset dei flag per prevenire accumulo infinito
+            visitedScenes = new Set();
+            completedActions = new Set();
             updateUI();
             loadScene(currentScene);
             document.getElementById('start-screen').style.display = 'none';
@@ -3388,6 +4476,9 @@
                 console.error("Scena non trovata:", sceneName);
                 return;
             }
+            
+            // Marca la scena come visitata
+            markSceneVisited(sceneName);
 
             // Animazione di transizione avanzata
             const storyPanel = document.getElementById('story-panel');
@@ -3435,9 +4526,13 @@
                         button.appendChild(ripple);
                         
                         setTimeout(() => {
+                            // Esegui onSelect se presente
                             if (choice.onSelect) {
                                 choice.onSelect();
-                            } else if (choice.nextScene) {
+                            }
+                            
+                            // Carica la prossima scena se specificata
+                            if (choice.nextScene) {
                                 loadScene(choice.nextScene);
                             }
                         }, 150);
@@ -3534,7 +4629,9 @@
                 hasPartialMemory,
                 hasAlertedGuards,
                 hasDefeatedMummy,
-                achievements
+                achievements,
+                visitedScenes: Array.from(visitedScenes),
+                completedActions: Array.from(completedActions)
             };
             localStorage.setItem('soulJourneySave', JSON.stringify(gameState));
             updateUI(); // Aggiorna sempre la visualizzazione dopo il salvataggio
@@ -3579,6 +4676,14 @@
                     libraryScholar: false,
                     secretExplorer: false
                 };
+                
+                // Ripristina i flag di scene visitate e azioni completate
+                if (gameState.visitedScenes) {
+                    visitedScenes = new Set(gameState.visitedScenes);
+                }
+                if (gameState.completedActions) {
+                    completedActions = new Set(gameState.completedActions);
+                }
 
                 document.getElementById('start-screen').style.display = 'none';
                 document.getElementById('game-container').style.display = 'flex';
@@ -4204,6 +5309,204 @@
                 }
             });
         });
+
+        // ============================================================================
+        // FUNZIONI DI SUPPORTO PER I SISTEMI NARRATIVI
+        // ============================================================================
+        
+        // Funzione per gestire azioni una sola volta
+        function executeActionOnce(actionId, callback) {
+            if (!completedActions.has(actionId)) {
+                completedActions.add(actionId);
+                callback();
+                return true; // Azione eseguita
+            }
+            return false; // Azione già eseguita
+        }
+        
+        // Funzione per verificare se una scena è già stata visitata
+        function isSceneVisited(sceneId) {
+            return visitedScenes.has(sceneId);
+        }
+        
+        // Funzione per marcare una scena come visitata
+        function markSceneVisited(sceneId) {
+            visitedScenes.add(sceneId);
+        }
+
+        function showMemoryScene(flashback) {
+            // Mostra una scena di flashback
+            const gameContainer = document.getElementById('game-container');
+            const storyText = document.getElementById('story-text');
+            const choicesContainer = document.getElementById('choices-container');
+            
+            // Controlli di sicurezza per evitare errori
+            if (!gameContainer || !storyText || !choicesContainer) {
+                console.error('Elementi DOM non trovati per il flashback');
+                return;
+            }
+            
+            if (!flashback || !flashback.title || !flashback.text || !flashback.choices) {
+                console.error('Flashback non valido:', flashback);
+                return;
+            }
+            
+            // Salva lo stato corrente
+            if (!window.sceneHistory) {
+                window.sceneHistory = [];
+            }
+            window.sceneHistory.push({
+                text: storyText.innerHTML,
+                choices: Array.from(choicesContainer.children).map(btn => btn.textContent)
+            });
+            
+            // Mostra il flashback
+            storyText.innerHTML = `
+                <div class="memory-flashback">
+                    <h2 style="color: var(--ds-gold); text-align: center; margin-bottom: 20px;">
+                        ${flashback.title}
+                    </h2>
+                    <p style="font-style: italic; color: var(--ds-gold-light); line-height: 1.6;">
+                        ${flashback.text}
+                    </p>
+                </div>
+            `;
+            
+            // Mostra le scelte del flashback
+            choicesContainer.innerHTML = '';
+            flashback.choices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.className = 'choice-button memory-choice';
+                button.textContent = choice.text;
+                button.onclick = choice.action;
+                choicesContainer.appendChild(button);
+            });
+            
+            // Aggiungi stili speciali per i flashback
+            gameContainer.classList.add('memory-mode');
+            
+            console.log('Flashback mostrato:', flashback.title);
+        }
+
+        function restoreChoices(choices) {
+            // Ripristina le scelte precedenti (da implementare in base al tuo sistema)
+            const choicesContainer = document.getElementById('choices-container');
+            choicesContainer.innerHTML = '';
+            // Qui dovrai implementare la logica per ricreare i pulsanti delle scelte
+            console.log('Ripristinando scelte:', choices);
+        }
+
+        // Aggiungi stili CSS per i nuovi elementi
+        const additionalStyles = `
+            <style>
+                .memory-flashback {
+                    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(0, 0, 0, 0.8) 100%);
+                    border: 2px solid var(--ds-gold);
+                    border-radius: 10px;
+                    padding: 20px;
+                    margin: 20px 0;
+                }
+                
+                .memory-choice {
+                    background: linear-gradient(135deg, var(--ds-gold) 0%, var(--ds-gold-dark) 100%);
+                    color: var(--ds-black);
+                    border: 2px solid var(--ds-gold-light);
+                    font-weight: bold;
+                }
+                
+                .memory-choice:hover {
+                    background: linear-gradient(135deg, var(--ds-gold-light) 0%, var(--ds-gold) 100%);
+                    box-shadow: 0 0 15px var(--ds-gold-glow);
+                }
+                
+                .memory-mode {
+                    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(0, 0, 0, 0.95) 100%);
+                }
+                
+                .karma-change {
+                    animation: fadeInOut 2s ease-in-out;
+                }
+                
+                @keyframes fadeInOut {
+                    0% { opacity: 0; transform: translateY(-20px); }
+                    20% { opacity: 1; transform: translateY(0); }
+                    80% { opacity: 1; transform: translateY(0); }
+                    100% { opacity: 0; transform: translateY(-20px); }
+                }
+            </style>
+        `;
+
+        // Inserisci gli stili nel documento
+        document.head.insertAdjacentHTML('beforeend', additionalStyles);
+
+        // Cache DOM per ottimizzazione FASE 4
+        const domCache = {
+            storyText: null,
+            choicesContainer: null,
+            healthDisplay: null,
+            karmaDisplay: null,
+            
+            init: function() {
+                this.storyText = document.getElementById('story-text');
+                this.choicesContainer = document.getElementById('choices-container');
+                this.healthDisplay = document.getElementById('health-display');
+                this.karmaDisplay = document.getElementById('karma-display');
+                console.log('Cache DOM inizializzata');
+            },
+            
+            updateStory: function(text) {
+                if (this.storyText) {
+                    this.storyText.innerHTML = text;
+                }
+            },
+            
+            updateChoices: function(choices) {
+                if (this.choicesContainer) {
+                    this.choicesContainer.innerHTML = '';
+                    choices.forEach(choice => {
+                        const button = document.createElement('button');
+                        button.className = 'choice-button';
+                        button.textContent = choice.text;
+                        button.onclick = choice.action;
+                        this.choicesContainer.appendChild(button);
+                    });
+                }
+            }
+        };
+        
+        // Cleanup automatico per ottimizzazione memoria
+        function cleanupMemory() {
+            // Rimuovi event listeners non necessari
+            if (window.sceneHistory && window.sceneHistory.length > 10) {
+                window.sceneHistory = window.sceneHistory.slice(-5);
+            }
+            
+            // Cleanup flashback
+            if (window.currentFlashback) {
+                window.currentFlashback = null;
+            }
+            
+            console.log('Cleanup memoria eseguito');
+        }
+        
+        // Inizializza i sistemi quando il documento è caricato
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Sistemi narrativi inizializzati');
+            console.log('Memory System:', memorySystem);
+            console.log('Karma System:', karmaSystem);
+            console.log('Consequence System:', consequenceSystem);
+            
+            // Inizializza cache DOM
+            domCache.init();
+            
+            // Avvia cleanup periodico
+            setInterval(cleanupMemory, 30000); // Ogni 30 secondi
+        });
+
+        // Esporta i sistemi per uso globale
+        window.memorySystem = memorySystem;
+        window.karmaSystem = karmaSystem;
+        window.consequenceSystem = consequenceSystem;
     </script>
 </body>
 </html>

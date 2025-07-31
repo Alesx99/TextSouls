@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulatore Route - TextSouls</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+        
+        :root {
+            --ds-gold: #D4AF37;
+            --ds-gold-dark: #B8860B;
+            --ds-gold-light: #FFD700;
+            --ds-blood: #8B0000;
+            --ds-stone: #696969;
+            --ds-black: #000000;
+            --ds-black-light: #1a1a1a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(139, 0, 0, 0.1) 100%);
+            border-radius: 10px;
+            border: 2px solid var(--ds-gold);
+        }
+        
+        .header h1 {
+            color: var(--ds-gold);
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--ds-gold);
+        }
+        
+        .header p {
+            color: #cccccc;
+            font-size: 1.1em;
+        }
+        
+        .simulator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .route-section {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--ds-stone);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        
+        .route-section h2 {
+            color: var(--ds-gold);
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid var(--ds-gold);
+            padding-bottom: 10px;
+        }
+        
+        .step-node {
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
+            border: 2px solid var(--ds-stone);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .step-node:hover {
+            border-color: var(--ds-gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .step-node.current {
+            border-color: var(--ds-gold);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(139, 0, 0, 0.1) 100%);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+        
+        .step-title {
+            color: var(--ds-gold);
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+        
+        .step-description {
+            color: #cccccc;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .step-choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .choice-btn {
+            background: linear-gradient(135deg, var(--ds-stone) 0%, var(--ds-stone-dark) 100%);
+            border: 1px solid var(--ds-gold);
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .choice-btn:hover {
+            background: linear-gradient(135deg, var(--ds-gold) 0%, var(--ds-gold-dark) 100%);
+            color: var(--ds-black);
+            transform: scale(1.05);
+        }
+        
+        .choice-btn.selected {
+            background: linear-gradient(135deg, var(--ds-gold) 0%, var(--ds-gold-dark) 100%);
+            color: var(--ds-black);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        
+        .route-info {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--ds-gold);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .route-info h3 {
+            color: var(--ds-gold);
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .route-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-item {
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid var(--ds-gold);
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            color: var(--ds-gold);
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .stat-value {
+            color: #ffffff;
+            font-size: 1.2em;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .control-btn {
+            background: linear-gradient(135deg, var(--ds-blood) 0%, var(--ds-blood-dark) 100%);
+            border: 2px solid var(--ds-gold);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: linear-gradient(135deg, var(--ds-gold) 0%, var(--ds-gold-dark) 100%);
+            color: var(--ds-black);
+            transform: scale(1.05);
+        }
+        
+        .path-visualization {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--ds-stone);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .path-visualization h3 {
+            color: var(--ds-gold);
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .path-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(212, 175, 55, 0.05);
+            border-radius: 5px;
+        }
+        
+        .path-arrow {
+            color: var(--ds-gold);
+            font-size: 1.5em;
+            margin: 0 15px;
+        }
+        
+        .path-step-name {
+            color: var(--ds-gold);
+            font-weight: bold;
+        }
+        
+        .path-step-choice {
+            color: #cccccc;
+            font-style: italic;
+            margin-left: 10px;
+        }
+        
+        .finale-section {
+            background: rgba(139, 0, 0, 0.1);
+            border: 2px solid var(--ds-blood);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .finale-section h3 {
+            color: var(--ds-blood);
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .finale-item {
+            background: rgba(139, 0, 0, 0.2);
+            border: 1px solid var(--ds-blood);
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .finale-title {
+            color: var(--ds-gold);
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        
+        .finale-description {
+            color: #cccccc;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .simulator-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗺️ Simulatore Route - TextSouls</h1>
+            <p>Il Viaggio dell'Anima Perduta - Analisi Completa delle Route e Destinazioni</p>
+        </div>
+
+        <div class="controls">
+            <button class="control-btn" onclick="resetSimulator()">🔄 Reset Simulatore</button>
+            <button class="control-btn" onclick="showAllRoutes()">📊 Mostra Tutte le Route</button>
+            <button class="control-btn" onclick="simulateRandomPath()">🎲 Percorso Casuale</button>
+        </div>
+
+        <div class="simulator-grid">
+            <!-- Route Principali -->
+            <div class="route-section">
+                <h2>🏛️ Route Principali</h2>
+                
+                <div class="step-node" data-step="cellaIniziale">
+                    <div class="step-title">Cella Iniziale</div>
+                    <div class="step-description">Il punto di partenza. Cella umida con tre scelte fondamentali.</div>
+                    <div class="step-choices">
+                        <button class="choice-btn" onclick="selectChoice('esploraCella')">Esplora la cella</button>
+                        <button class="choice-btn" onclick="selectChoice('ricordaPassato')">Prova a ricordare</button>
+                        <button class="choice-btn" onclick="selectChoice('gridaAiuto')">Grida aiuto</button>
+                    </div>
+                </div>
+
+                <div class="step-node" data-step="esploraCella">
+                    <div class="step-title">Esplorazione Cella</div>
+                    <div class="step-description">Scoperta di fessura nel muro e ricerca oggetti.</div>
+                    <div class="step-choices">
+                        <button class="choice-btn" onclick="selectChoice('tunnelSegreto')">Tunnel segreto</button>
+                        <button class="choice-btn" onclick="selectChoice('cercaNellaCella')">Cerca oggetti</button>
+                    </div>
+                </div>
+
+                <div class="step-node" data-step="corridoioOscuro">
+                    <div class="step-title">Corridoio Oscuro</div>
+                    <div class="step-description">Primo corridoio con biforcazioni e pericoli.</div>
+                    <div class="step-choices">
+                        <button class="choice-btn" onclick="selectChoice('salaGolem')">Sala Golem</button>
+                        <button class="choice-btn" onclick="selectChoice('biforcazione')">Biforcazione</button>
+                    </div>
+                </div>
+
+                <div class="step-node" data-step="salaGolem">
+                    <div class="step-title">Sala del Golem</div>
+                    <div class="step-description">Boss fight principale con multiple strategie.</div>
+                    <div class="step-choices">
+                        <button class="choice-btn" onclick="selectChoice('combattiGolem')">Combatti</button>
+                        <button class="choice-btn" onclick="selectChoice('cercaPuntoDebole')">Punto debole</button>
+                        <button class="choice-btn" onclick="selectChoice('tentaAggiramento')">Aggira</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Route Alternative -->
+            <div class="route-section">
+                <h2>🌿 Route Alternative</h2>
+                
+                <div class="step-node" data-step="ricordaPassato">
+                    <div class="step-title">Ricorda il Passato</div>
+                    <div class="step-description">Route di memoria e introspezione.</div>
+                    <div class="step-choices">
+                        <button class="choice-btn" onclick="selectChoice('ricordoParziale')">Ricordo parziale</button>
+                        <button class="choice-btn" onclick="selectChoice('sogniRicordi')">Sogni e ricordi</button>
+                    </div>
+                </div>
+
+                <div class="step-node" data-step="gridaAiuto">
+                    <div class="step-title">Grida Aiuto</div>
+                    <div class="step-description">Route di soccorso esterno.</div>
+                    <div class="step-choices">
+                        <button class="choice-btn" onclick="selectChoice('guardieArrivano')">Guardie arrivano</button>
+                    </div>
+                </div>
+
+                <div class="step-node" data-step="biforcazione">
+                    <div class="step-title">Biforcazione</div>
+                    <div class="step-description">Scelte multiple con rischi diversi.</div>
+                    <div class="step-choices">
+                        <button class="choice-btn" onclick="selectChoice('passaggioUmidito')">Passaggio umido</button>
+                        <button class="choice-btn" onclick="selectChoice('passaggioProfondo')">Passaggio profondo</button>
+                    </div>
+                </div>
+
+                <div class="step-node" data-step="terreSelvagge">
+                    <div class="step-title">Terre Selvagge</div>
+                    <div class="step-description">Mondo aperto con multiple destinazioni.</div>
+                    <div class="step-choices">
+                        <button class="choice-btn" onclick="selectChoice('ingressoCitta')">Città</button>
+                        <button class="choice-btn" onclick="selectChoice('rovineTempio')">Rovine tempio</button>
+                        <button class="choice-btn" onclick="selectChoice('cercaRisorseSelvaggie')">Cerca risorse</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Route Avanzate -->
+        <div class="route-section">
+            <h2>⚔️ Route Avanzate e Finali</h2>
+            
+            <div class="step-node" data-step="cercaManufatti">
+                <div class="step-title">Cerca Manufatti</div>
+                <div class="step-description">Route di collezione oggetti speciali.</div>
+                <div class="step-choices">
+                    <button class="choice-btn" onclick="selectChoice('manufattiTrovati')">Manufatti trovati</button>
+                </div>
+            </div>
+
+            <div class="step-node" data-step="apriSarcofago">
+                <div class="step-title">Apri Sarcofago</div>
+                <div class="step-description">Route pericolosa con combattimento mummia.</div>
+                <div class="step-choices">
+                    <button class="choice-btn" onclick="selectChoice('combattiMummia')">Combatti mummia</button>
+                    <button class="choice-btn" onclick="selectChoice('sconfiggiMummia')">Sconfiggi mummia</button>
+                </div>
+            </div>
+
+            <div class="step-node" data-step="fuochiSacri">
+                <div class="step-title">Fuochi Sacri</div>
+                <div class="step-description">Route di purificazione e salvataggio.</div>
+                <div class="step-choices">
+                    <button class="choice-btn" onclick="selectChoice('cercaFuocoSacro')">Cerca fuoco sacro</button>
+                    <button class="choice-btn" onclick="selectChoice('santuarioIntermedio')">Santuario intermedio</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiche Route -->
+        <div class="route-info">
+            <h3>📊 Statistiche Route</h3>
+            <div class="route-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Route Principali</div>
+                    <div class="stat-value" id="main-routes">4</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Route Alternative</div>
+                    <div class="stat-value" id="alt-routes">4</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Route Avanzate</div>
+                    <div class="stat-value" id="adv-routes">3</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Step Totali</div>
+                    <div class="stat-value" id="total-steps">25+</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Finali Possibili</div>
+                    <div class="stat-value" id="total-endings">4</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Boss Fight</div>
+                    <div class="stat-value" id="boss-fights">3</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualizzazione Percorso -->
+        <div class="path-visualization">
+            <h3>🛤️ Percorso Attuale</h3>
+            <div id="current-path">
+                <div class="path-step">
+                    <span class="path-step-name">Cella Iniziale</span>
+                    <span class="path-arrow">→</span>
+                    <span class="path-step-choice">Seleziona una scelta per iniziare</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Finali -->
+        <div class="finale-section">
+            <h3>🏆 Finali Disponibili</h3>
+            
+            <div class="finale-item">
+                <div class="finale-title">🎉 Finale Buono - Redenzione Completa</div>
+                <div class="finale-description">Raccolta di tutti gli artefatti sacri e purificazione completa. Richiede: Amuleto Antico, Pergamena di Rune, Gemma Preziosa, Corona dell'Anima.</div>
+            </div>
+            
+            <div class="finale-item">
+                <div class="finale-title">⚫ Finale Oscuro - Ascensione delle Tenebre</div>
+                <div class="finale-description">Abbracciare il potere della maledizione e trasformarsi. Richiede: Percorso di corruzione e potere oscuro.</div>
+            </div>
+            
+            <div class="finale-item">
+                <div class="finale-title">⚪ Finale Neutrale - Saggezza della Sopravvivenza</div>
+                <div class="finale-description">Scegliere la via della saggezza e ritirarsi. Richiede: Comprensione della maledizione senza combatterla.</div>
+            </div>
+            
+            <div class="finale-item">
+                <div class="finale-title">🎯 Finale Standard - Vittoria</div>
+                <div class="finale-description">Sconfiggere la maledizione con mezzi tradizionali. Richiede: Sconfitta del boss finale e fuga.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dati delle route
+        const routeData = {
+            cellaIniziale: {
+                title: "Cella Iniziale",
+                description: "Punto di partenza con tre scelte fondamentali",
+                choices: {
+                    esploraCella: "Esplora la cella",
+                    ricordaPassato: "Prova a ricordare", 
+                    gridaAiuto: "Grida aiuto"
+                }
+            },
+            esploraCella: {
+                title: "Esplorazione Cella",
+                description: "Scoperta tunnel segreto e oggetti",
+                choices: {
+                    tunnelSegreto: "Tunnel segreto",
+                    cercaNellaCella: "Cerca oggetti"
+                }
+            },
+            ricordaPassato: {
+                title: "Ricorda il Passato",
+                description: "Route di memoria e introspezione",
+                choices: {
+                    ricordoParziale: "Ricordo parziale",
+                    sogniRicordi: "Sogni e ricordi"
+                }
+            },
+            gridaAiuto: {
+                title: "Grida Aiuto",
+                description: "Route di soccorso esterno",
+                choices: {
+                    guardieArrivano: "Guardie arrivano"
+                }
+            },
+            corridoioOscuro: {
+                title: "Corridoio Oscuro",
+                description: "Primo corridoio con biforcazioni",
+                choices: {
+                    salaGolem: "Sala Golem",
+                    biforcazione: "Biforcazione"
+                }
+            },
+            salaGolem: {
+                title: "Sala del Golem",
+                description: "Boss fight principale",
+                choices: {
+                    combattiGolem: "Combatti",
+                    cercaPuntoDebole: "Punto debole",
+                    tentaAggiramento: "Aggira"
+                }
+            },
+            biforcazione: {
+                title: "Biforcazione",
+                description: "Scelte multiple con rischi",
+                choices: {
+                    passaggioUmidito: "Passaggio umido",
+                    passaggioProfondo: "Passaggio profondo"
+                }
+            },
+            terreSelvagge: {
+                title: "Terre Selvagge",
+                description: "Mondo aperto con destinazioni",
+                choices: {
+                    ingressoCitta: "Città",
+                    rovineTempio: "Rovine tempio",
+                    cercaRisorseSelvaggie: "Cerca risorse"
+                }
+            },
+            cercaManufatti: {
+                title: "Cerca Manufatti",
+                description: "Route di collezione oggetti",
+                choices: {
+                    manufattiTrovati: "Manufatti trovati"
+                }
+            },
+            apriSarcofago: {
+                title: "Apri Sarcofago",
+                description: "Route pericolosa con mummia",
+                choices: {
+                    combattiMummia: "Combatti mummia",
+                    sconfiggiMummia: "Sconfiggi mummia"
+                }
+            },
+            fuochiSacri: {
+                title: "Fuochi Sacri",
+                description: "Route di purificazione",
+                choices: {
+                    cercaFuocoSacro: "Cerca fuoco sacro",
+                    santuarioIntermedio: "Santuario intermedio"
+                }
+            }
+        };
+
+        let currentPath = ['cellaIniziale'];
+        let selectedChoices = {};
+
+        function selectChoice(nextStep) {
+            const currentStep = currentPath[currentPath.length - 1];
+            selectedChoices[currentStep] = nextStep;
+            
+            if (!currentPath.includes(nextStep)) {
+                currentPath.push(nextStep);
+            }
+            
+            updatePathVisualization();
+            updateCurrentStep();
+        }
+
+        function updatePathVisualization() {
+            const pathContainer = document.getElementById('current-path');
+            pathContainer.innerHTML = '';
+            
+            for (let i = 0; i < currentPath.length; i++) {
+                const step = currentPath[i];
+                const stepData = routeData[step];
+                
+                const pathStep = document.createElement('div');
+                pathStep.className = 'path-step';
+                
+                const stepName = document.createElement('span');
+                stepName.className = 'path-step-name';
+                stepName.textContent = stepData ? stepData.title : step;
+                
+                pathStep.appendChild(stepName);
+                
+                if (i < currentPath.length - 1) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'path-arrow';
+                    arrow.textContent = '→';
+                    pathStep.appendChild(arrow);
+                    
+                    const choice = document.createElement('span');
+                    choice.className = 'path-step-choice';
+                    const nextStep = currentPath[i + 1];
+                    const choiceText = stepData && stepData.choices ? stepData.choices[nextStep] : nextStep;
+                    choice.textContent = choiceText;
+                    pathStep.appendChild(choice);
+                }
+                
+                pathContainer.appendChild(pathStep);
+            }
+        }
+
+        function updateCurrentStep() {
+            // Rimuovi classe current da tutti i step
+            document.querySelectorAll('.step-node').forEach(node => {
+                node.classList.remove('current');
+            });
+            
+            // Aggiungi classe current all'ultimo step
+            const lastStep = currentPath[currentPath.length - 1];
+            const currentNode = document.querySelector(`[data-step="${lastStep}"]`);
+            if (currentNode) {
+                currentNode.classList.add('current');
+            }
+        }
+
+        function resetSimulator() {
+            currentPath = ['cellaIniziale'];
+            selectedChoices = {};
+            updatePathVisualization();
+            updateCurrentStep();
+            
+            // Rimuovi selezione da tutti i bottoni
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+        }
+
+        function showAllRoutes() {
+            // Mostra tutte le route disponibili
+            const allSteps = Object.keys(routeData);
+            currentPath = allSteps;
+            updatePathVisualization();
+            updateCurrentStep();
+        }
+
+        function simulateRandomPath() {
+            resetSimulator();
+            
+            // Simula un percorso casuale
+            const possibleSteps = Object.keys(routeData);
+            const randomSteps = [];
+            
+            // Aggiungi alcuni step casuali
+            for (let i = 0; i < 5; i++) {
+                const randomStep = possibleSteps[Math.floor(Math.random() * possibleSteps.length)];
+                if (!randomSteps.includes(randomStep)) {
+                    randomSteps.push(randomStep);
+                }
+            }
+            
+            currentPath = ['cellaIniziale', ...randomSteps];
+            updatePathVisualization();
+            updateCurrentStep();
+        }
+
+        // Inizializzazione
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentStep();
+            
+            // Aggiungi eventi ai bottoni delle scelte
+            document.querySelectorAll('.choice-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Rimuovi selezione da tutti i bottoni dello stesso step
+                    const stepNode = this.closest('.step-node');
+                    stepNode.querySelectorAll('.choice-btn').forEach(b => {
+                        b.classList.remove('selected');
+                    });
+                    
+                    // Aggiungi selezione al bottone cliccato
+                    this.classList.add('selected');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
