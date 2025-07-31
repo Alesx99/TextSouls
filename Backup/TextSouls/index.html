@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextSouls - Il Viaggio dell'Anima Perduta</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        
+        :root {
+            --ds-gold: #D4AF37;
+            --ds-gold-dark: #B8860B;
+            --ds-gold-light: #FFD700;
+            --ds-blood: #8B0000;
+            --ds-blood-light: #DC143C;
+            --ds-stone: #696969;
+            --ds-stone-light: #808080;
+            --ds-stone-dark: #2F4F4F;
+            --ds-black: #000000;
+            --ds-black-light: #1a1a1a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, var(--ds-black) 0%, var(--ds-black-light) 100%);
+            color: var(--ds-gold);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--ds-gold);
+            border-radius: 50%;
+            animation: float 6s infinite linear;
+            opacity: 0.6;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-10vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 10;
+            max-width: 800px;
+            padding: 2rem;
+        }
+        
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px var(--ds-gold);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px var(--ds-gold);
+            }
+            to {
+                text-shadow: 0 0 30px var(--ds-gold), 0 0 40px var(--ds-gold-light);
+            }
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--ds-stone-light);
+            font-style: italic;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+            color: var(--ds-stone-light);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .play-button {
+            display: inline-block;
+            padding: 1.5rem 3rem;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--ds-black);
+            background: linear-gradient(45deg, var(--ds-gold), var(--ds-gold-light));
+            border: 2px solid var(--ds-gold-dark);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .play-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+            background: linear-gradient(45deg, var(--ds-gold-light), var(--ds-gold));
+        }
+        
+        .play-button:active {
+            transform: translateY(0);
+        }
+        
+        .features {
+            margin-top: 3rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+        }
+        
+        .feature {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--ds-stone);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+        }
+        
+        .feature h3 {
+            color: var(--ds-gold);
+            margin-bottom: 0.5rem;
+            font-family: 'Cinzel', serif;
+        }
+        
+        .feature p {
+            color: var(--ds-stone-light);
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            color: var(--ds-stone);
+        }
+        
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 8s;"></div>
+    </div>
+    
+    <div class="container">
+        <h1 class="title">TextSouls</h1>
+        <p class="subtitle">Il Viaggio dell'Anima Perduta</p>
+        
+        <p class="description">
+            Un'avventura testuale ispirata a Dark Souls, dove ogni scelta conta e il destino della tua anima è nelle tue mani. 
+            Esplora un mondo oscuro e misterioso, affronta creature temibili e scopri i segreti di un'antica maledizione.
+        </p>
+        
+        <a href="game.html" class="play-button">Inizia l'Avventura</a>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🎮 Gioco Testuale Immersivo</h3>
+                <p>Esperienza narrativa completa con oltre 50 scene interconnesse e scelte che influenzano la trama.</p>
+            </div>
+            <div class="feature">
+                <h3>⚔️ Sistema di Combattimento</h3>
+                <p>Affronta nemici temibili con un sistema di combattimento strategico e bilanciato.</p>
+            </div>
+            <div class="feature">
+                <h3>🏰 Esplorazione</h3>
+                <p>Scopri luoghi misteriosi, raccogli oggetti e risolvi enigmi per progredire nella storia.</p>
+            </div>
+            <div class="feature">
+                <h3>💾 Salvataggio Automatico</h3>
+                <p>Il tuo progresso viene salvato automaticamente, così puoi continuare l'avventura quando vuoi.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Creato con passione per gli amanti di Dark Souls e delle avventure testuali</p>
+        </div>
+    </div>
+</body>
+</html> 

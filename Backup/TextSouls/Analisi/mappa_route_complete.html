@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mappa Completa Route - Il Viaggio dell'Anima Perduta</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: #2b2b2b;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffd700;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: #3a3a3a;
+            border-radius: 5px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+        
+        .map-container {
+            width: 100%;
+            overflow-x: auto;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        svg {
+            background-color: #1a1a1a;
+            border-radius: 5px;
+        }
+        
+        .node {
+            fill: #4a4a4a;
+            stroke: #666;
+            stroke-width: 2;
+            rx: 8;
+            ry: 8;
+        }
+        
+        .node-start {
+            fill: #2d5a2d;
+            stroke: #4a8a4a;
+        }
+        
+        .node-combat {
+            fill: #5a2d2d;
+            stroke: #8a4a4a;
+        }
+        
+        .node-crafting {
+            fill: #2d5a5a;
+            stroke: #4a8a8a;
+        }
+        
+        .node-temple {
+            fill: #5a2d5a;
+            stroke: #8a4a8a;
+        }
+        
+        .node-final {
+            fill: #5a5a2d;
+            stroke: #8a8a4a;
+        }
+        
+        .node-sacred {
+            fill: #2d2d5a;
+            stroke: #4a4a8a;
+        }
+        
+        .node-text {
+            fill: #e0e0e0;
+            font-size: 10px;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+        
+        .connection {
+            stroke: #888;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#arrowhead);
+        }
+        
+        .connection-main {
+            stroke: #4a8a4a;
+            stroke-width: 3;
+        }
+        
+        .connection-alternative {
+            stroke: #8a8a4a;
+            stroke-width: 2;
+            stroke-dasharray: 5,5;
+        }
+        
+        .connection-return {
+            stroke: #8a4a4a;
+            stroke-width: 1;
+            stroke-dasharray: 3,3;
+        }
+        
+        .path-label {
+            fill: #ffd700;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .stats {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-card {
+            background-color: #3a3a3a;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ffd700;
+        }
+        
+        .stat-title {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .print-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #ffd700;
+            color: #1a1a1a;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        @media print {
+            .print-button {
+                display: none;
+            }
+            
+            body {
+                background-color: white;
+                color: black;
+            }
+            
+            .container {
+                background-color: white;
+                box-shadow: none;
+            }
+            
+            .map-container {
+                background-color: white;
+            }
+            
+            svg {
+                background-color: white;
+            }
+            
+            .node-text {
+                fill: black;
+            }
+            
+            .path-label {
+                fill: #333;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button" onclick="window.print()">🖨️ Stampa Mappa</button>
+    
+    <div class="container">
+        <h1>🗺️ MAPPA COMPLETA ROUTE - "Il Viaggio dell'Anima Perduta"</h1>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2d5a2d;"></div>
+                <span>Punto di Inizio</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #5a2d2d;"></div>
+                <span>Combattimento</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2d5a5a;"></div>
+                <span>Crafting/Commercio</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #5a2d5a;"></div>
+                <span>Tempio/Cripta</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #5a5a2d;"></div>
+                <span>Finali</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: #2d2d5a;"></div>
+                <span>Fuochi Sacri</span>
+            </div>
+        </div>
+        
+        <div class="map-container">
+            <svg width="1300" height="800" viewBox="0 0 1300 800">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                            refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#888" />
+                    </marker>
+                </defs>
+                
+                <!-- PERCORSO A - TUNNEL SEGRETO -->
+                <g id="path-a">
+                    <text x="50" y="30" class="path-label">PERCORSO A - TUNNEL SEGRETO</text>
+                    
+                    <!-- Scene Percorso A -->
+                    <rect x="50" y="50" width="120" height="60" class="node node-start" rx="8" ry="8"/>
+                    <text x="110" y="85" class="node-text">Cella Iniziale</text>
+                    
+                    <rect x="220" y="50" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="280" y="85" class="node-text">Esplora Cella</text>
+                    
+                    <rect x="390" y="50" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="450" y="85" class="node-text">Tunnel Segreto</text>
+                    
+                    <rect x="560" y="50" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="620" y="85" class="node-text">Cunicolo Buio</text>
+                    
+                    <rect x="730" y="50" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="790" y="85" class="node-text">Grotta Luminosa</text>
+                    
+                    <rect x="900" y="50" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="960" y="85" class="node-text">Uscita Prigione</text>
+                    
+                    <!-- Connessioni Percorso A -->
+                    <line x1="170" y1="80" x2="220" y2="80" class="connection connection-main"/>
+                    <line x1="340" y1="80" x2="390" y2="80" class="connection connection-main"/>
+                    <line x1="510" y1="80" x2="560" y2="80" class="connection connection-main"/>
+                    <line x1="680" y1="80" x2="730" y2="80" class="connection connection-main"/>
+                    <line x1="850" y1="80" x2="900" y2="80" class="connection connection-main"/>
+                </g>
+                
+                <!-- PERCORSO B - PORTA PRINCIPALE -->
+                <g id="path-b">
+                    <text x="50" y="150" class="path-label">PERCORSO B - PORTA PRINCIPALE</text>
+                    
+                    <!-- Scene Percorso B -->
+                    <rect x="50" y="170" width="120" height="60" class="node node-start" rx="8" ry="8"/>
+                    <text x="110" y="205" class="node-text">Cella Iniziale</text>
+                    
+                    <rect x="220" y="170" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="280" y="205" class="node-text">Cerca nella Cella</text>
+                    
+                    <rect x="390" y="170" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="450" y="205" class="node-text">Tentativo Porta</text>
+                    
+                    <rect x="560" y="170" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="620" y="205" class="node-text">Corridoio Oscuro</text>
+                    
+                    <rect x="730" y="170" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="790" y="205" class="node-text">Biforcazione</text>
+                    
+                    <rect x="900" y="170" width="120" height="60" class="node node-combat" rx="8" ry="8"/>
+                    <text x="960" y="205" class="node-text">Sala Golem</text>
+                    
+                    <rect x="1010" y="170" width="120" height="60" class="node node-combat" rx="8" ry="8"/>
+                    <text x="1070" y="205" class="node-text">Combatti Golem</text>
+                    
+                    <rect x="1120" y="170" width="120" height="60" class="node node-sacred" rx="8" ry="8"/>
+                    <text x="1180" y="205" class="node-text">Dopo Golem</text>
+                    
+                    <!-- Connessioni Percorso B -->
+                    <line x1="170" y1="200" x2="220" y2="200" class="connection connection-main"/>
+                    <line x1="340" y1="200" x2="390" y2="200" class="connection connection-main"/>
+                    <line x1="510" y1="200" x2="560" y2="200" class="connection connection-main"/>
+                    <line x1="680" y1="200" x2="730" y2="200" class="connection connection-main"/>
+                    <line x1="850" y1="200" x2="900" y2="200" class="connection connection-main"/>
+                    <line x1="1020" y1="200" x2="1010" y2="200" class="connection connection-main"/>
+                    <line x1="1130" y1="200" x2="1120" y2="200" class="connection connection-main"/>
+                </g>
+                
+                <!-- PERCORSO C - TERRE SELVAGGE -->
+                <g id="path-c">
+                    <text x="50" y="290" class="path-label">PERCORSO C - TERRE SELVAGGE</text>
+                    
+                    <!-- Scene Percorso C -->
+                    <rect x="50" y="310" width="120" height="60" class="node node-sacred" rx="8" ry="8"/>
+                    <text x="110" y="345" class="node-text">Terre Selvagge</text>
+                    
+                    <rect x="220" y="310" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="280" y="345" class="node-text">Cerca Risorse</text>
+                    
+                    <rect x="390" y="310" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="450" y="345" class="node-text">Ingresso Città</text>
+                    
+                    <rect x="560" y="310" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="620" y="345" class="node-text">Distretto Mercantile</text>
+                    
+                    <rect x="730" y="310" width="120" height="60" class="node node-crafting" rx="8" ry="8"/>
+                    <text x="790" y="345" class="node-text">Mercante Pozioni</text>
+                    
+                    <!-- Connessioni Percorso C -->
+                    <line x1="170" y1="340" x2="220" y2="340" class="connection connection-main"/>
+                    <line x1="340" y1="340" x2="390" y2="340" class="connection connection-main"/>
+                    <line x1="510" y1="340" x2="560" y2="340" class="connection connection-main"/>
+                    <line x1="680" y1="340" x2="730" y2="340" class="connection connection-main"/>
+                </g>
+                
+                <!-- PERCORSO D - TEMPIO E CRIPTA -->
+                <g id="path-d">
+                    <text x="50" y="430" class="path-label">PERCORSO D - TEMPIO E CRIPTA</text>
+                    
+                    <!-- Scene Percorso D -->
+                    <rect x="50" y="450" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="110" y="485" class="node-text">Rovine Tempio</text>
+                    
+                    <rect x="220" y="450" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="280" y="485" class="node-text">Cerca Manufatti</text>
+                    
+                    <rect x="390" y="450" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="450" y="485" class="node-text">Manufatti Trovati</text>
+                    
+                    <rect x="560" y="450" width="120" height="60" class="node" rx="8" ry="8"/>
+                    <text x="620" y="485" class="node-text">Passaggio Segreto</text>
+                    
+                    <rect x="730" y="450" width="120" height="60" class="node node-temple" rx="8" ry="8"/>
+                    <text x="790" y="485" class="node-text">Interno Tempio</text>
+                    
+                    <rect x="900" y="450" width="120" height="60" class="node node-temple" rx="8" ry="8"/>
+                    <text x="960" y="485" class="node-text">Cripta Antica</text>
+                    
+                    <rect x="1010" y="450" width="120" height="60" class="node node-combat" rx="8" ry="8"/>
+                    <text x="1070" y="485" class="node-text">Combatti Mummia</text>
+                    
+                    <rect x="1120" y="450" width="120" height="60" class="node node-temple" rx="8" ry="8"/>
+                    <text x="1180" y="485" class="node-text">Cripta Profonda</text>
+                    
+                    <!-- Connessioni Percorso D -->
+                    <line x1="170" y1="480" x2="220" y2="480" class="connection connection-main"/>
+                    <line x1="340" y1="480" x2="390" y2="480" class="connection connection-main"/>
+                    <line x1="510" y1="480" x2="560" y2="480" class="connection connection-main"/>
+                    <line x1="680" y1="480" x2="730" y2="480" class="connection connection-main"/>
+                    <line x1="850" y1="480" x2="900" y2="480" class="connection connection-main"/>
+                    <line x1="1020" y1="480" x2="1010" y2="480" class="connection connection-main"/>
+                    <line x1="1130" y1="480" x2="1120" y2="480" class="connection connection-main"/>
+                </g>
+                
+                <!-- PERCORSO E - FINALI -->
+                <g id="path-e">
+                    <text x="50" y="570" class="path-label">PERCORSO E - FINALI</text>
+                    
+                    <!-- Scene Percorso E -->
+                    <rect x="50" y="590" width="120" height="60" class="node node-final" rx="8" ry="8"/>
+                    <text x="110" y="625" class="node-text">Santuario Finale</text>
+                    
+                    <rect x="220" y="590" width="120" height="60" class="node node-final" rx="8" ry="8"/>
+                    <text x="280" y="625" class="node-text">Finale Buono</text>
+                    
+                    <rect x="390" y="590" width="120" height="60" class="node node-final" rx="8" ry="8"/>
+                    <text x="450" y="625" class="node-text">Finale Oscuro</text>
+                    
+                    <rect x="560" y="590" width="120" height="60" class="node node-final" rx="8" ry="8"/>
+                    <text x="620" y="625" class="node-text">Finale Neutrale</text>
+                    
+                    <!-- Connessioni Percorso E -->
+                    <line x1="170" y1="620" x2="220" y2="620" class="connection connection-main"/>
+                    <line x1="340" y1="620" x2="390" y2="620" class="connection connection-alternative"/>
+                    <line x1="340" y1="620" x2="560" y2="620" class="connection connection-alternative"/>
+                </g>
+                
+                <!-- CONNESSIONI TRA PERCORSI -->
+                <g id="cross-connections">
+                    <!-- Terre Selvagge collega tutti i percorsi -->
+                    <line x1="960" y1="230" x2="110" y2="340" class="connection connection-main"/>
+                    <line x1="1180" y1="230" x2="110" y2="340" class="connection connection-main"/>
+                    <line x1="110" y1="340" x2="110" y2="340" class="connection connection-main"/>
+                    
+                    <!-- Tempio dalle Terre Selvagge -->
+                    <line x1="110" y1="340" x2="110" y2="480" class="connection connection-alternative"/>
+                    
+                    <!-- Santuario Finale -->
+                    <line x1="110" y1="340" x2="110" y2="620" class="connection connection-main"/>
+                    <line x1="1180" y1="485" x2="110" y2="620" class="connection connection-main"/>
+                </g>
+                
+                <!-- SCENE SECONDARIE -->
+                <g id="secondary-scenes">
+                    <text x="50" y="690" class="path-label">SCENE SECONDARIE E RAMIFICAZIONI</text>
+                    
+                    <!-- Scene secondarie -->
+                    <rect x="50" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="100" y="735" class="node-text" style="font-size: 8px;">Ricorda Passato</text>
+                    
+                    <rect x="170" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="220" y="735" class="node-text" style="font-size: 8px;">Grida Aiuto</text>
+                    
+                    <rect x="290" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="340" y="735" class="node-text" style="font-size: 8px;">Passaggio Umidito</text>
+                    
+                    <rect x="410" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="460" y="735" class="node-text" style="font-size: 8px;">Nido Ratti</text>
+                    
+                    <rect x="530" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="580" y="735" class="node-text" style="font-size: 8px;">Cerca Fuoco Sacro</text>
+                    
+                    <rect x="650" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="700" y="735" class="node-text" style="font-size: 8px;">Sogni Ricordi</text>
+                    
+                    <rect x="770" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="820" y="735" class="node-text" style="font-size: 8px;">Uscita Grotta</text>
+                    
+                    <rect x="890" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="940" y="735" class="node-text" style="font-size: 8px;">Cerca Punto Debole</text>
+                    
+                    <rect x="1010" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="1060" y="735" class="node-text" style="font-size: 8px;">Attacca Braccio</text>
+                    
+                    <rect x="1130" y="710" width="100" height="40" class="node" rx="5" ry="5"/>
+                    <text x="1180" y="735" class="node-text" style="font-size: 8px;">Tocca Runa</text>
+                </g>
+            </svg>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-title">📊 STATISTICHE ROUTE</div>
+                <p><strong>Scene Totali:</strong> 50 scene implementate</p>
+                <p><strong>Percorsi Principali:</strong> 5 percorsi distinti</p>
+                <p><strong>Scene di Combattimento:</strong> 2 (Golem, Mummia)</p>
+                <p><strong>Fuochi Sacri:</strong> 5 punti di salvataggio</p>
+                <p><strong>Finali Disponibili:</strong> 3 ending diversi</p>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">🎯 PERCORSI IDENTIFICATI</div>
+                <p><strong>Percorso A:</strong> Tunnel Segreto (6 scene)</p>
+                <p><strong>Percorso B:</strong> Porta Principale (8 scene)</p>
+                <p><strong>Percorso C:</strong> Terre Selvagge (5 scene)</p>
+                <p><strong>Percorso D:</strong> Tempio e Cripta (8 scene)</p>
+                <p><strong>Percorso E:</strong> Finali (3 scene)</p>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">⚔️ SISTEMI DI GIOCO</div>
+                <p><strong>Combattimento:</strong> Sistema di danni bilanciato</p>
+                <p><strong>Crafting:</strong> 4 ricette disponibili</p>
+                <p><strong>Achievement:</strong> 8 achievement tracciabili</p>
+                <p><strong>Salvataggio:</strong> Sistema automatico ai fuochi sacri</p>
+                <p><strong>Inventario:</strong> 10 oggetti utilizzabili</p>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-title">🔗 CONNESSIONI CHIAVE</div>
+                <p><strong>Terre Selvagge:</strong> Hub centrale che collega tutti i percorsi</p>
+                <p><strong>Santuario Finale:</strong> Punto di convergenza per tutti i finali</p>
+                <p><strong>Biforcazione:</strong> Nodo di scelta nel percorso principale</p>
+                <p><strong>Fuochi Sacri:</strong> Punti di salvataggio strategici</p>
+                <p><strong>Scene Secondarie:</strong> 10+ scene di esplorazione aggiuntive</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
